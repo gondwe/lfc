@@ -1,0 +1,6 @@
+/vendor
+/assets
+/application/config
+/application/third_party
+/composer.json
+/composer.lock

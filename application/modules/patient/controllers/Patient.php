@@ -53,4 +53,21 @@ class Patient extends MX_Controller {
 		redirect("crud/new/patient_master");
 		// $data["profile"] = $this->patient_model->profile($id);
 	}
+
+	public function addcharge($id){
+
+		$this->load->model("items/items_model");
+		$this->load->model("billing/bills_model");
+
+		$data["profile"] = $this->pfdata($id);
+		$data["items"] = $this->items_model->itemslist(); 
+		$data["charges"] = $this->bills_model->chargesbyid($id);
+		
+		serve("charge",$data);
+	}
+
+	function savecharge(){
+		pf($_POST);
+	}
+
 }

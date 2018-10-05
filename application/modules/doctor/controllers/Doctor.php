@@ -16,4 +16,18 @@ class Doctor extends MX_Controller {
     function savebooking($id){
 
     }
+
+    function index(){
+        serve("dashboard",[]);
+    }
+
+
+    function enqueue($id){
+        serve("enqueue",["id"=>$id]);
+    }
+
+
+    function book(){
+        pf($_POST);
+    }
 }

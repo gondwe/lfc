@@ -1,6 +1,6 @@
 <!-- <h4>Registration/ Screening</h4> -->
-
-<h5 class='text-success pull-left m-3'>Recent Patient List</h5>
+<?=topic("recent patient list")?>
+<!-- <h5 class='text-success pull-left m-3'>Recent Patient List</h5> -->
 <input type="text" placeholder="Search" id="search" autofocus class="pull-right form-control col-md-4">
 <div id="play">
 <?php $this->load->view("namesearch", ["search"=>$recent])?>

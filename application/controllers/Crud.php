@@ -84,4 +84,33 @@ class Crud extends MX_Controller {
         endif;
 
     }
+
+
+    public function search($mod, $meth, $arg=''){
+        if(isset($_POST["s"])){
+            $req = ($_POST['s']);
+            $echo = '';
+            
+            if($req !== ""){
+                $data = [];
+                // $m = explode("/",$m);
+                // $mod = array_shift($m);
+                // $meth = array_shift($m);
+                // $args = implode(",",$m);
+                // $req = ($_POST['s']);
+
+                $mdname = $mod."/".$mod."_model";
+                $md2 = $mod."_model";
+                
+                $model = $this->load->model($mdname);
+                $data = $this->$md2->$meth($req);
+
+                foreach($data as $k=>$v){
+                    $echo .= '<li style="" class="form-control" data-rate="'.$v->unit_cost.'" data-id="'.$v->id.'" onclick=lod(this)>'.$v->item.'</div>';
+                }
+            }
+
+            echo $echo;
+        }
+    }
 }

@@ -1,9 +1,6 @@
-<h5 class='m-3 text-success'>Screening Dashboard</h5>
+
 <?php 
-
-// pf($recent);
-
-// $this->load->view("datatable/table",["td"=>$recent]);
+echo topic("screening & registration");
 $this->load->view("dashtabs");
 ?>
 <hr>

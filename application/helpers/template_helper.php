@@ -176,3 +176,16 @@ function ucase($i){
 function pno($i){
 	return "<span class='text-danger'>".str_pad($i,4,"0", STR_PAD_LEFT)."</span>";
 }
+
+function pflink($id){
+	$names = fetch("select patient_names from patient_master where id = '$id'");
+	return "<a class='text-secondary' href='".base_url('patient/profile/'.$id)."'>".rxx($names)." | pNo.".pno($id)."</a>";
+}
+
+function topic($i){
+	return "<h5 class='m-3 text-danger'> ".rxx($i)."</h5>";
+}
+
+function newbtn($a,$b=null,$c="ADD"){
+	return '<a href="'.base_url($a).'" class="btn btn-sm btn-primary m-4" >'.$c.' '.rxx($b,2).' <i class="fa fa-plus"></i></a>';
+}

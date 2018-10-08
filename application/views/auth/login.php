@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=90%">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<title>LFC MIS</title>
 	
@@ -14,7 +14,7 @@
 	
 	
 </head>
-<div class="container" style="margin-top:10%">
+<div class="container" style="margin-top:5%">
     <h1 class="text-center ">
     <span class="text-center h1">
     <i class=" fa fa-medkit text-danger"></i> 
@@ -94,7 +94,7 @@
       }
     .container{
         border: 1px solid #ddd;
-        box-shadow: 0px 6px 5px 0px #ddd;
+        box-shadow: 0px 0px 300px 60px #ddd;
         padding-top:50px
         /* box-shadow: 0px 2px 6px 0px darkgreen; */
     }

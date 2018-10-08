@@ -33,6 +33,12 @@ class Fieldsets {
 			case "patient_master":
 			$this->combos("sex","select id, b from dataconf where a = 'gender'");
 			// $this->combos("sex",[1=>"MALE",2=>"FEMALE"]);
+			
+			$this->aliases["patient_names"] = "names";
+			// $this->ucase("patient_names");
+			$this->aliases["nationalid"] = "id no";
+			$this->aliases["category"] = "section";
+			$this->aliases["postaladdress"] = "Address";
 			$this->combos("category","select id, b from dataconf where a = 'patient_type'");
 			break;
 

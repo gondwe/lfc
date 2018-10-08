@@ -6,8 +6,8 @@
 
 </div>
 
-<div id='swal' class="alert text-light alert-dismissible fade pull-right col-md-4" 
-	style='background:purple; margin:5px;bottom:5px; position:fixed;right:5px; border-radius:55px;' role="alert">
+<div id='swaly' class="alert text-light alert-dismissible fade pull-right col-md-4" 
+	style='background:purple; margin:5px;bottom:5px; position:fixed;right:5px; border-radius:55px; display:none' role="alert">
   <strong>Info ! </strong><span id='memos'></span>
   <!-- <button type="button" class="" style='border-left:1px solid #333;background:#000;border-radius: 0px 50px 50px 0px;' data-dismiss="alert" aria-label="Close">
     <span aria-hidden="true">&times;</span>
@@ -122,6 +122,15 @@ function myrefresh(){
 
 		function pf(i){ console.log(i); }
 		function spill(i){pf(i);}
+		
+	function play_sound(f='info'){
+		$base_url = "<?=base_url("")?>"
+		audioElement = document.createElement('audio');
+		audioElement.setAttribute('src', $base_url + 'assets/'+f+'.mp3');
+		audioElement.setAttribute('autoplay', 'autoplay');
+		audioElement.load();
+		audioElement.play();
+	}
 
 </script>
 
@@ -162,10 +171,10 @@ function push($mess='test',$username='admin'){
     echo "
     <script>
 		send('".$msg."','".$user."');
-		// play_sound();
     </script>
     ";
 }
+
 
 
 
@@ -173,14 +182,7 @@ function push($mess='test',$username='admin'){
 
 
 
-<script>
-    // $(document).ready(()=>{
-    //     $("#scrntop").hide().load("as").fadeIn(2000);
-    //     $("#scrnplay").hide().load("as").fadeIn(3000);
-    // })
-</script>
-
-<div class='fixed-bottom pb-1'style="text-align:center; background:#fff" >
+<div class='fixed-bottom pb-1'style="text-align:center; background:#fff; z-index:-10;" >
      <small style='color:#bbb; width:100%; background:#fff; ' >All Rights Reserved &copy 2018 Lighthouse For Christ Eye Center</small>
     </body>
 </div>
@@ -191,3 +193,16 @@ function push($mess='test',$username='admin'){
 <script src='<?=base_url('assets/js/sweetalert.min.js')?>'></script>
 <script src='<?=base_url('assets/js/custom.js')?>'></script>
 <script src='<?=base_url('assets/js/searchbox.js')?>'></script>
+
+
+<?php 
+if(isset($this->session->infoh)){
+	?><script>play_sound();swal('Success', '<?=$this->session->infoh ?>', 'success');</script><?php
+	unset($_SESSION["infoh"]);
+}
+if(isset($this->session->errorh)){
+	?><script>play_sound('nop');swal('Error', '<?=$this->session->errorh ?>', 'warning');</script><?php
+	unset($_SESSION["errorh"]);
+}
+
+?>

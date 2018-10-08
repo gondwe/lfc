@@ -15,19 +15,42 @@ class Screening extends MX_Controller {
 	}
 
 	public function dashboard(){
-		$data["recent"] = $this->recent();
+		$data["recent"] = $this->recent()["recent"];
+		$data["clinics"] = $this->patient_model->clinics();
+
 		serve("dashboard",$data);
 	}
+
+
+	function osod(){
+		$data["recent"] = $this->recent()["recent"];
+		serve("main",$data);
+	}
+
 
 
 	public function tablesearch(){
 		$s = $this->input->post("x");
 		if($s == ""){ 
-			$data["search"]  = $this->recent();
+			$data["search"]  = $this->recent()["recent"];
 		}else{
 			$data["search"] = $this->patient_model->namesearch($s);
 		}
 		$this->load->view("screening/namesearch",$data);
 		// $this->load->view("screening/namesearch",$data);
 	}
+
+
+	
+	function query(){
+		pf($_POST);
+	}
+
+	
+	function update(){
+		pf($_POST);
+	}
+
+
+
 }

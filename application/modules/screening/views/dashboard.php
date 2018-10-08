@@ -1,6 +1,6 @@
 
 <?php 
-echo topic("screening & registration");
+echo topic("check in & registration");
 $this->load->view("dashtabs");
 ?>
 <hr>

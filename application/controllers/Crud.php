@@ -10,10 +10,10 @@ class Crud extends MX_Controller {
 
     public function edit($table=null,$id=null){
         if(is_null($table) || is_null($id)) redirect("/", "refresh");
-        echo "<h5 class='m-3 text-info'>Edit ".titles()."</h5>";
-
-        $d = new tablo($table);
-        $d->edit($id);
+        
+        $data["id"] = $id;
+        $data["table"] = $table;
+        serve("crud/edit",$data);
     }
 
     public function insert($t){
@@ -41,7 +41,7 @@ class Crud extends MX_Controller {
             $fields = implode(", ",$fields);
             $sql = "update $table set $fields where id = '$id'";
             savefiles($table, $id);
-            if(process($sql)){ echo " Save Successful"; }
+            if(process($sql)){ datalog("save"); success("Save Successful"); }
             redirect($ref);
         }
     }
@@ -61,28 +61,9 @@ class Crud extends MX_Controller {
     }
 
 
-    function delete(){
-        
-        $id = array_pop($_SESSION["params"]);
-        $table = array_pop($_SESSION["params"]);
+    function delete($table,$id){
         $sql = "delete from `$table` where id = '$id'";
-        $a = $_SERVER["HTTP_REFERER"];
-        $b = str_replace("page=","/#",$_GET["url"]);
-
-        // exit("w");
-        ?>
-
-        <a href="<?=site_url($b)?>" class="btn btn-success col-md-4 col-lg-3 col-sm-6 col-xs-12">OK</a>
-        </div>
-        <?php 
-        spill($a);
-        if(process($sql)):
-        code("logging CRUD activity..");
-        datalog("del");
-        code("Log successful");
-        code("Press OK to Continue");
-        endif;
-
+        if(process($sql)) datalog("del");
     }
 
 
@@ -93,12 +74,6 @@ class Crud extends MX_Controller {
             
             if($req !== ""){
                 $data = [];
-                // $m = explode("/",$m);
-                // $mod = array_shift($m);
-                // $meth = array_shift($m);
-                // $args = implode(",",$m);
-                // $req = ($_POST['s']);
-
                 $mdname = $mod."/".$mod."_model";
                 $md2 = $mod."_model";
                 
@@ -106,7 +81,7 @@ class Crud extends MX_Controller {
                 $data = $this->$md2->$meth($req);
 
                 foreach($data as $k=>$v){
-                    $echo .= '<li style="" class="form-control" data-rate="'.$v->unit_cost.'" data-id="'.$v->id.'" onclick=lod(this)>'.$v->item.'</div>';
+                    $echo .= '<li id="reslist" class="form-control" data-rate="'.$v->unit_cost.'" data-id="'.$v->id.'" onclick=lod(this)>'.$v->item.'</div>';
                 }
             }
 

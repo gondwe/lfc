@@ -10,7 +10,7 @@ function serve($view, $data=[]){
 	$ci->load->view("partial/footer");
 }
 
-function render($a,$b){ serve($a,$b);}
+function render($a,$b=null){ serve($a,$b);}
 
 function dbx(){	$ci = & get_instance(); return $ci->db; } 
 	function clean($i){ return mysqli_real_escape_string(dbx(), $i);}
@@ -69,6 +69,7 @@ function dbx(){	$ci = & get_instance(); return $ci->db; }
 		if(process($sql)){
 			$r = fetch("select max(id) from $t");
 			savefiles($t, $r);
+			success("Save Successful");
 			return "Save Successful";
 		}
 		
@@ -127,15 +128,17 @@ function dbx(){	$ci = & get_instance(); return $ci->db; }
 
 		
 	function datalog($op){
-		global $user;
-		$h = fopen("lfclogs.txt","a");
-		fputs($h, date("d/m/YG:i:s").",OP:".$op.",Acc:".$user->username.";");
+		code("logging CRUD activity..\n");
+		$id =$_SESSION["user_id"];
+		$username = fetch("select username from users where id = '$id'");
+		$h = fopen("assets/lfclogs.txt","a");
+		fputs($h, date("d/m/YG:i:s").",OP:".$op.",Acc:".$username.";");
 		fclose($h);
+		code("Log successful\n");
+		// echo("Press OK to Continue\n");
 	}
 
-	function code($i){ echo "<code>$i</code></br>"; }
-
-
+	function code($i){ echo "<code>$i</code>"; }
 
 	function protect_page(){ if(!isset($_SESSION["user_id"])) redirect("auth/logout"); }
 
@@ -158,7 +161,7 @@ function dbx(){	$ci = & get_instance(); return $ci->db; }
 			}
 		
 			echo "<h5 class='m-4 pull-left'>";
-			echo $t." <span class='text-primary'>".$more."</span>";
+			echo proper($t)." <span class='text-primary'>".rxx($more)."</span>";
 			if($btn) echo "<a href='".$r."' class='ml-3 mb-2 btn btn-sm btn-danger'>".$label."</a>";
 			echo "</h5>";
 		}else{
@@ -188,4 +191,24 @@ function topic($i){
 
 function newbtn($a,$b=null,$c="ADD"){
 	return '<a href="'.base_url($a).'" class="btn btn-sm btn-primary m-4" >'.$c.' '.rxx($b,2).' <i class="fa fa-plus"></i></a>';
+}
+
+function datef($d){
+    return date_format(new DateTime($d),"D jS M, Y G:i:s A");
+}
+
+function success($msg){
+	$_SESSION["infoh"] = $msg; 
+	// die();
+}
+function warning($msg){
+	
+	$_SESSION["errorh"] = $msg; 
+	// die();
+// handle push
+?>
+
+
+<?php
+
 }

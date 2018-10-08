@@ -111,11 +111,11 @@ class Tablo extends fieldsets{
 		
 		
 		// echo '<link rel="stylesheet" href="assets/DataTables/datatables.min.css">';
-		echo '<link rel="stylesheet" href="css/jquery-ui.css">';
-		echo '<link rel="stylesheet" href="css/dataTables.jqueryui.min.css">';
-		echo'<table id="example" class="display compact" style="width:100%;">';
+		echo '<link rel="stylesheet" href="'.base_url('assets/css/jquery-ui.css').'">';
+		echo '<link rel="stylesheet" href="'.base_url('assets/css/dataTables.jqueryui.min.css').'">';
+		echo'<table id="example" class="display striped" style="width:100%;">';
 		echo "<thead>";
-			echo "<tr style='background:#00bcd4; padding-left:10px; font-weight:lighter;border-right: 1px solid black;' class='text-light'>";
+			echo "<tr id='tablohead' class='text-light'>";
 				echo "<th  style='border-right:1px solid #ddd;'>SNO</th>";
 			foreach($this->fieldnames as $ff):
 				if(!in_array($ff,$this->reserved)){ $fg = strtolower($ff);
@@ -130,7 +130,7 @@ class Tablo extends fieldsets{
 		echo "<tbody>";
 			$x = 1;
 			foreach($this->data as $d=>$dd):
-			echo "<tr>";
+			echo "<tr id='row".$d."'>";
 			echo "<td style='border-right:1px solid #ccc; text-align:center'>$x</td>";
 				foreach($dd as $db=>$da){
 					if(!in_array($db, $this->reserved)){ 
@@ -151,8 +151,8 @@ class Tablo extends fieldsets{
 			}
 
 			echo $this->edit ? "<td><a data-toggle='tooltip' title='Edit' href='".base_url('crud/edit/'.$this->table."/".$dd['id'])."'><i class='fa fa-edit text-primary' style='color:#800f7b'></i></a></td>" : null;
-			$urlx = base_url("crud/delete/".$this->table."/".$dd['id']."&url=".$_SERVER["QUERY_STRING"]);
-			echo $this->delete ?  "<td><a data-toggle='tooltip' title='Delete'  class='' onclick='dltr(\"".$urlx."\");'><i class='fa fa-trash-o text-danger'></i></a></td>" : null;
+			$urlx = base_url("crud/delete/".$this->table."/".$dd['id']);
+			echo $this->delete ?  "<td><a data-toggle='tooltip' title='Delete'  class='' onclick='dltr(\"".$urlx."\",\"".$dd['id']."\");'><i class='fa fa-trash-o text-danger'></i></a></td>" : null;
 			echo "</tr>";
 			$x++;
 			
@@ -171,12 +171,14 @@ class Tablo extends fieldsets{
 	</div>
 	<script>
 	$(document).ready(function() {
-		$("#example").DataTable();
+		$("#example").DataTable({
+			pageLength:25
+		});
 	} );
 
-	function dltr(url){
-		a = confirm("You are about to Delete 1 Record <br> ARE YOU SURE");
-		if(a) window.location.href=url;
+	function dltr(url,id){
+		swaldel(url,id);
+	
 	}
 </script>
 ';

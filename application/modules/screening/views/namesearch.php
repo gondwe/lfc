@@ -1,4 +1,5 @@
-<table id="example" class='table table-striped'   >
+
+<table id="example" class='table-striped' width="100%"   >
     <thead >
         <tr>
             <th style="border-right:1px solid #ddd; ">Sno</th>

@@ -3,11 +3,11 @@
 class Doctor extends MX_Controller {
 
     function __construct(){
+        $this->load->model("patient_model");
 
     }
 
     function diary($a){
-        $this->load->model("patient_model");
         
         $data["patient"] = $this->patient_model->profile($a);
         serve("bookpatient",$data);
@@ -18,7 +18,9 @@ class Doctor extends MX_Controller {
     }
 
     function index(){
-        serve("dashboard",[]);
+        $data["recent"] = $this->patient_model->recent();
+        $data["clinics"] = $this->patient_model->clinics();
+        serve("dashboard",$data);
     }
 
 

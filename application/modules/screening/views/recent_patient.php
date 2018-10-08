@@ -1,7 +1,8 @@
-<!-- <h4>Registration/ Screening</h4> -->
-<?=topic("recent patient list")?>
+<div class="pull-left">
+<?php echo topic("recent patient list")?>
+</div>
 <!-- <h5 class='text-success pull-left m-3'>Recent Patient List</h5> -->
-<input type="text" placeholder="Search" id="search" autofocus class="pull-right form-control col-md-4">
+<input type="text" placeholder="Search" id="search" autofocus class="pull-right col-md-3">
 <div id="play">
 <?php $this->load->view("namesearch", ["search"=>$recent])?>
 </div>
@@ -28,3 +29,8 @@ let c = 0;
     //     $("#bb").hide().html("res").fadeIn(2000);
     // })
 </script>
+
+<style>
+    #search {margin-top:1rem;}
+    td { padding:5px }
+</style>

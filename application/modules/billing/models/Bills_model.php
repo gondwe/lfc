@@ -38,14 +38,10 @@ class Bills_model extends CI_Model {
 
 
 
-    public function receipts(){
-
+    public function receipts($bill=null){
         $txids = gl("select distinct txn from tbl_charges");
-
-        $dd = array_map(@[$this, "txn_trail"], $txids);
-
+        $dd = array_map([$this, "txn_trail"], $txids);
         return $dd;
-
     }
 
 
@@ -53,51 +49,46 @@ class Bills_model extends CI_Model {
     
 
     function txn_trail($billno){
-
         return $this->load->view("billing/tx_trail", ["bill"=>$billno],"TRUE");
-
     }
 
         
 
     function pay($bill){
-
         $cost =  $this->paidup($bill);
-
-
-
         $amt = $this->input->post("amount");
-
         $amount = $amt > $cost ? $cost : $amt;
-
-        $change = $amount - $cost;
-
+        $change = $amt - $cost;
         $star = $amount == $cost ? 1 : 3;
-
         
+        
+        $pmethod = $this->input->post("pmethod");
+        // $txno = $this->input->post("txn");
+        
+        
+        // pf($amount);
+        // pf($cost);
+        // pf($bill);
+                
+                // exit("wait");
 
-        // die("wait");
 
+        if($amount > 0){
 
-
-        if($amt > 0){
-
-            if($amt > $cost) $this->session->set_flashdata("Payment Successfully<br>Change : ".number_format($change,2));
-
-            if($amt = $cost) $this->session->set_flashdata("Payment Successfully");
-
-
+            if($amount < $cost) success("Payment Successful");
+            if($amount > $cost) success(`Payment Successful \n `."Change : KES ".number_format($change,2));
+            if($amount == $cost) success("Payment Successful");
 
             $insert = "insert into tbx_transact (txnid, pmethod, amount, user_id) 
-
-                        values('".$this->input->post("txn")."','".$this->input->post("pmethod")."','".$amount."','".$this->session->user_id."')";
+                        values('".$bill."','".$pmethod."','".$amount."','".$this->session->user_id."')";
 
             $update = "update tbl_charges set a_status = '$star' where txn = $bill";
 
             $this->db->query($insert);
-
             $this->db->query($update);
 
+        }else{
+            warning("Amount Cannot be Empty");
         }
 
     }
@@ -122,7 +113,7 @@ class Bills_model extends CI_Model {
 
     public function txtrail($bill){
 
-        return gett("select * from tbx_transact where txnid = '$bill'");
+        return get("select * from tbx_transact where txnid = '$bill' order by date desc");
 
     }
 
@@ -132,7 +123,7 @@ class Bills_model extends CI_Model {
 
         $pending =  array_sum(array_map(@[$this, "costbychargeid"],gl("select id from tbl_charges where a_status <> 1 and charge_id = '$pid'")));
 
-        $payments = gt("select sum(amount) from tbx_transact where txnid in (select distinct(txn) from tbl_charges where charge_id = '$pid')");
+        $payments = get("select sum(amount) from tbx_transact where txnid in (select distinct(txn) from tbl_charges where charge_id = '$pid')");
         $sql = "select distinct(txn) from tbl_charges where charge_id = '$pid'";
         $balance = array_sum(array_map(@[$this, "paidup"],gl($sql)));
 
@@ -153,7 +144,7 @@ class Bills_model extends CI_Model {
 
     function exists($bill){
 
-        return gt("select count(id) from tbl_charges where txn = '$bill'") > 0 ? true : false;
+        return get("select count(id) from tbl_charges where txn = '$bill'") > 0 ? true : false;
 
     }
 
@@ -161,7 +152,7 @@ class Bills_model extends CI_Model {
 
     function bill_owner($bill){
 
-        return gt("select charge_id from tbl_charges where txn = '$bill'");
+        return get("select charge_id from tbl_charges where txn = '$bill'");
 
     }
 
@@ -169,7 +160,7 @@ class Bills_model extends CI_Model {
 
     function bill_status($bill){
 
-        return gt("select a_status from tbl_charges  where txn = '$bill' limit 1 ");
+        return fetch("select a_status from tbl_charges  where txn = '$bill' limit 1 ");
 
     }
 
@@ -177,26 +168,30 @@ class Bills_model extends CI_Model {
 
 
 
-    function paidup($bill){
+    function paidup($bill,$dateid=null){
 
-        $paid = gt("select ifnull(sum(amount),0) from tbx_transact where txnid = '$bill'");
-
+        $date = is_null($dateid)? date("Y-m-d G:i:s") : fetch("select date from tbx_transact where id = $dateid");
+        // spill($date);
+        // $cumul = fetch("select ifnull(sum(amount),0) as paid from tbx_transact where txnid = '$bill' and date <= '$date' ");
+        $sql = "select ifnull(sum(amount),0) as paid from tbx_transact where txnid = '$bill' and date <= '$date' ";
+        $paid = fetch($sql);
         $cost = $this->costbytxn($bill);
-
-        return $cost - $paid;
-
+        // pf($cost);
+        // pf($paid);
+        // pf($cumul);
+        $rem = $cost - $paid;
+        // pf($rem);
+        return $rem;
     }
+
+
 
 
 
     function balances(){
-
-        $paid = gt("select ifnull(sum(amount),0) from tbx_transact");
-
+        $paid = fetch("select ifnull(sum(amount),0) from tbx_transact");
         $cost = $this->allcost();
-
         return $cost - $paid;
-
     }
 
 
@@ -204,24 +199,29 @@ class Bills_model extends CI_Model {
 
 
     function costbytxn($bill){
-
-        return array_sum(array_map(@[$this, "costbychargeid"],gl("select id from tbl_charges where txn = '$bill' ")));
+        $txnlist = get("select id from tbl_charges where txn = '$bill' ");
+        return array_sum(array_map([$this, "costbychargeid"],$txnlist));
+        // pf($txnlist);
+        // pf($i);
+        // die();
 
     }
 
 
 
     function costbychargeid($charg_id){
-
-        return gt("select ti.unit_cost * tc.quantity from tbl_charges as tc left join tbl_item as ti on tc.item_id = ti.id where tc.id = '$charg_id'");
-
+        // pf($charg_id);
+        return  fetch("select ti.unit_cost * tc.quantity as cost from tbl_charges as tc left join tbl_item as ti on tc.item_id = ti.id where tc.id = '$charg_id->id'");
+        // pf($i);
+        // return $i;
+        // die();
     }
 
 
 
     function allcost(){
 
-        return gt("select sum(ti.unit_cost * tc.quantity) from tbl_charges as tc left join tbl_item as ti on tc.item_id = ti.id");
+        return get("select sum(ti.unit_cost * tc.quantity) from tbl_charges as tc left join tbl_item as ti on tc.item_id = ti.id");
 
     }
 
@@ -235,7 +235,7 @@ class Bills_model extends CI_Model {
 
         
 
-		$j =  gett("select ti.id, tc.txn, ti.item, tc.a_status,  concat(' \( ', tc.quantity, ' x ', ti.unit_cost, ' \)' ) as rate, ti.unit_cost*tc.quantity as total, concat(u.first_name,' ',u.last_name) as user, 
+		$j =  get("select ti.id, tc.txn, ti.item, tc.a_status,  concat(' \( ', tc.quantity, ' x ', ti.unit_cost, ' \)' ) as rate, ti.unit_cost*tc.quantity as total, concat(u.first_name,' ',u.last_name) as user, 
 
 		if(tc.a_status =1, '<button class=\'btn btn-success btn-xs\'>PAID</button>', if(tc.a_status = 3, '<button class=\'btn-xs btn-rounded btn btn-warning\'>BALANCE DUE</button>','<button class=\'btn-xs btn-rounded btn btn-warning\'>UNPAID</button>' ) ) as status , tc.date 
 
@@ -243,7 +243,8 @@ class Bills_model extends CI_Model {
 
 		left join tbl_item as ti on tc.item_id = ti.id
 
-		left join users as u on tc.user_id = u.id
+        left join users as u on tc.user_id = u.id
+        
 
 		$where
 
@@ -265,7 +266,7 @@ class Bills_model extends CI_Model {
 
             foreach($txns as $t){
 
-                if($y["txn"] == $t) $txn[$t][] = $y;
+                if($y->txn == $t) $txn[$t][] = $y;
 
             }
 
@@ -287,7 +288,7 @@ class Bills_model extends CI_Model {
 
         
 
-		$j =  gl("select ti.id, tc.txn, ti.item, tc.a_status, concat(' \( ', tc.quantity, ' x ', ti.unit_cost, ' \)' ) as rate, ti.unit_cost*tc.quantity as total, concat(u.first_name,' ',u.last_name) as user, 
+		$j =  get("select ti.id, tc.txn, ti.item, tc.a_status, tbx.id as tbxid, concat(' \( ', tc.quantity, ' x ', ti.unit_cost, ' \)' ) as rate, ti.unit_cost*tc.quantity as total, concat(u.first_name,' ',u.last_name) as user, 
 
 		if(tc.a_status =1, '<button class=\'btn btn-success btn-xs\'>PAID</button>', if(tc.a_status = 3 , '<button class=\'btn-xs btn-rounded btn btn-warning\'>BALANCE DUE</button>', '<button class=\'btn-xs btn-rounded btn btn-warning\'>UNPAID</button>') ) as status , tc.date 
 
@@ -295,7 +296,10 @@ class Bills_model extends CI_Model {
 
 		left join tbl_item as ti on tc.item_id = ti.id
 
-		left join users as u on tc.user_id = u.id
+        left join users as u on tc.user_id = u.id
+
+        left join tbx_transact as tbx on tbx.txnid = tc.txn
+        
 
 		$where
 
@@ -306,10 +310,10 @@ class Bills_model extends CI_Model {
         ");
 
         
-
+// pf(get_object_vars($j));
         $txns = array_unique(array_column($j,"txn"));
 
-
+// pf($txns);
 
         $txn = [];
 
@@ -317,7 +321,7 @@ class Bills_model extends CI_Model {
 
             foreach($txns as $t){
 
-                if($y["txn"] == $t) $txn[$t][] = $y;
+                if($y->txn == $t) $txn[$t][] = $y;
 
             }
 
@@ -327,6 +331,19 @@ class Bills_model extends CI_Model {
 
         return $txn;
 
-	}
+    }
+    
+    function lastpay($billno){
+        return fetch("select amount from tbx_transact where id = (select max(id) from tbx_transact where txnid = '$billno') ");
+    }
+    
 
+
+    function receipt($bill,$id=null){
+        return gl("select * from tbx_transact where id = '$id'");
+    }
+
+    function pay_trail($id){
+        return $this->charges($id);
+    }
 }

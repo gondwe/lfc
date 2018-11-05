@@ -12,7 +12,7 @@ class Auth extends CI_Controller
 		parent::__construct();
 		// $this->load->database();
 		$this->load->library(array('ion_auth', 'form_validation'));
-		$this->load->helper(array('url', 'language'));
+		// $this->load->helper(array('url', 'language'));
 
 		$this->form_validation->set_error_delimiters($this->config->item('error_start_delimiter', 'ion_auth'), $this->config->item('error_end_delimiter', 'ion_auth'));
 
@@ -47,7 +47,9 @@ class Auth extends CI_Controller
 				$this->data['users'][$k]->groups = $this->ion_auth->get_users_groups($user->id)->result();
 			}
 
-			$this->_render_page('auth' . DIRECTORY_SEPARATOR . 'index', $this->data);
+			// $this->_render_page('auth' . DIRECTORY_SEPARATOR . 'index', $this->data);
+			
+			render("auth/index",$this->data);
 		}
 	}
 
@@ -100,6 +102,7 @@ class Auth extends CI_Controller
 			);
 
 			$this->_render_page('auth' . DIRECTORY_SEPARATOR . 'login', $this->data);
+			// render("auth/index",$this->data); DONT!
 		}
 	}
 
@@ -166,7 +169,8 @@ class Auth extends CI_Controller
 			);
 
 			// render
-			$this->_render_page('auth' . DIRECTORY_SEPARATOR . 'change_password', $this->data);
+			// $this->_render_page('auth' . DIRECTORY_SEPARATOR . 'change_password', $this->data);
+			serve("auth/change_password",$this->data);
 		}
 		else
 		{
@@ -223,7 +227,8 @@ class Auth extends CI_Controller
 
 			// set any errors and display the form
 			$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
-			$this->_render_page('auth' . DIRECTORY_SEPARATOR . 'forgot_password', $this->data);
+			// $this->_render_page('auth' . DIRECTORY_SEPARATOR . 'forgot_password', $this->data);
+			render("auth/forgot_password",$this->data);
 		}
 		else
 		{
@@ -314,7 +319,8 @@ class Auth extends CI_Controller
 				$this->data['code'] = $code;
 
 				// render
-				$this->_render_page('auth' . DIRECTORY_SEPARATOR . 'reset_password', $this->data);
+				// $this->_render_page('auth' . DIRECTORY_SEPARATOR . 'reset_password', $this->data);
+				render("auth/reset_password",$this->data);
 			}
 			else
 			{
@@ -377,7 +383,8 @@ class Auth extends CI_Controller
 		if ($activation)
 		{
 			// redirect them to the auth page
-			$this->session->set_flashdata('message', $this->ion_auth->messages());
+			// $this->session->set_flashdata('message', $this->ion_auth->messages());
+			notice($this->ion_auth->messages());
 			redirect("auth", 'refresh');
 		}
 		else
@@ -414,6 +421,7 @@ class Auth extends CI_Controller
 			$this->data['user'] = $this->ion_auth->user($id)->row();
 
 			$this->_render_page('auth' . DIRECTORY_SEPARATOR . 'deactivate_user', $this->data);
+			// render("auth/deactivate_user",$this->data);
 		}
 		else
 		{
@@ -434,6 +442,7 @@ class Auth extends CI_Controller
 			}
 
 			// redirect them back to the auth page
+			notice("User Account Deactivated");
 			redirect('auth', 'refresh');
 		}
 	}
@@ -460,11 +469,11 @@ class Auth extends CI_Controller
 		if ($identity_column !== 'email')
 		{
 			$this->form_validation->set_rules('identity', $this->lang->line('create_user_validation_identity_label'), 'trim|required|is_unique[' . $tables['users'] . '.' . $identity_column . ']');
-			$this->form_validation->set_rules('email', $this->lang->line('create_user_validation_email_label'), 'trim|required|valid_email');
+			$this->form_validation->set_rules('email', $this->lang->line('create_user_validation_email_label'), 'trim|required');
 		}
 		else
 		{
-			$this->form_validation->set_rules('email', $this->lang->line('create_user_validation_email_label'), 'trim|required|valid_email|is_unique[' . $tables['users'] . '.email]');
+			$this->form_validation->set_rules('email', $this->lang->line('create_user_validation_email_label'), 'trim|required|is_unique[' . $tables['users'] . '.email]');
 		}
 		$this->form_validation->set_rules('phone', $this->lang->line('create_user_validation_phone_label'), 'trim');
 		$this->form_validation->set_rules('company', $this->lang->line('create_user_validation_company_label'), 'trim');
@@ -546,7 +555,8 @@ class Auth extends CI_Controller
 				'value' => $this->form_validation->set_value('password_confirm'),
 			);
 
-			$this->_render_page('auth' . DIRECTORY_SEPARATOR . 'create_user', $this->data);
+			// $this->_render_page('auth' . DIRECTORY_SEPARATOR . 'create_user', $this->data);
+			render("auth/create_user",$this->data);
 		}
 	}
 	/**
@@ -636,14 +646,16 @@ class Auth extends CI_Controller
 				if ($this->ion_auth->update($user->id, $data))
 				{
 					// redirect them back to the admin page if admin, or to the base url if non admin
-					$this->session->set_flashdata('message', $this->ion_auth->messages());
+					// $this->session->set_flashdata('message', $this->ion_auth->messages());
+					notice($this->ion_auth->messages());
 					$this->redirectUser();
 
 				}
 				else
 				{
 					// redirect them back to the admin page if admin, or to the base url if non admin
-					$this->session->set_flashdata('message', $this->ion_auth->errors());
+					// $this->session->set_flashdata('message', $this->ion_auth->errors());
+					error($this->ion_auth->messages());
 					$this->redirectUser();
 
 				}
@@ -697,7 +709,8 @@ class Auth extends CI_Controller
 			'type' => 'password'
 		);
 
-		$this->_render_page('auth' . DIRECTORY_SEPARATOR . 'edit_user', $this->data);
+		// $this->_render_page('auth' . DIRECTORY_SEPARATOR . 'edit_user', $this->data);
+		render("auth/edit_user",$this->data);
 	}
 
 	/**
@@ -722,7 +735,8 @@ class Auth extends CI_Controller
 			{
 				// check to see if we are creating the group
 				// redirect them back to the admin page
-				$this->session->set_flashdata('message', $this->ion_auth->messages());
+				// $this->session->set_flashdata('message', $this->ion_auth->messages());
+				notice($this->ion_auth->messages());
 				redirect("auth", 'refresh');
 			}
 		}
@@ -730,8 +744,9 @@ class Auth extends CI_Controller
 		{
 			// display the create group form
 			// set the flash data error message if there is one
-			$this->data['message'] = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
-
+			$message = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
+			if($message) notice($message,1);
+			$this->data["message"]="";
 			$this->data['group_name'] = array(
 				'name'  => 'group_name',
 				'id'    => 'group_name',
@@ -744,8 +759,9 @@ class Auth extends CI_Controller
 				'type'  => 'text',
 				'value' => $this->form_validation->set_value('description'),
 			);
-
-			$this->_render_page('auth' . DIRECTORY_SEPARATOR . 'create_group', $this->data);
+			$this->data["groups"] = $this->ion_auth->get_users_groups()->result();
+			// $this->_render_page('auth' . DIRECTORY_SEPARATOR . 'create_group', $this->data);
+			render("auth/create_group",$this->data);
 		}
 	}
 
@@ -770,6 +786,7 @@ class Auth extends CI_Controller
 		}
 
 		$group = $this->ion_auth->group($id)->row();
+		$this->data["dg"] = $this->db->query("select id, username, concat(first_name,' ',last_name) as names, phone from users where id in (select user_id from users_groups where group_id = '$id') ")->result();
 
 		// validate form input
 		$this->form_validation->set_rules('group_name', $this->lang->line('edit_group_validation_name_label'), 'required|alpha_dash');
@@ -782,13 +799,14 @@ class Auth extends CI_Controller
 
 				if ($group_update)
 				{
-					$this->session->set_flashdata('message', $this->lang->line('edit_group_saved'));
+					notice($this->lang->line('edit_group_saved'));
 				}
 				else
 				{
-					$this->session->set_flashdata('message', $this->ion_auth->errors());
+					notice($this->ion_auth->errors());
+					
 				}
-				redirect("auth", 'refresh');
+				redirect("auth/groups", 'refresh');
 			}
 		}
 
@@ -814,7 +832,8 @@ class Auth extends CI_Controller
 			'value' => $this->form_validation->set_value('group_description', $group->description),
 		);
 
-		$this->_render_page('auth' . DIRECTORY_SEPARATOR . 'edit_group', $this->data);
+		// $this->_render_page('auth' . DIRECTORY_SEPARATOR . 'edit_group', $this->data);
+		render("auth/edit_group",$this->data);
 	}
 
 	/**
@@ -861,6 +880,16 @@ class Auth extends CI_Controller
 		{
 			return $view_html;
 		}
+	}
+
+
+	function groups(){
+		if($this->ion_auth->is_admin()) { $data["groups"] = $this->ion_auth->get_users_groups()->result(); render("auth/groups", $data); 
+		}else{ kickout(); }
+	}
+
+	function delgroup($id){
+		$this->db->query("delete from groups where id ='$id'"); notice("Group deleted successfully"); redirect("auth/groups");
 	}
 
 }

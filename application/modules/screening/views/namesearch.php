@@ -1,26 +1,30 @@
 
 <table id="example" class='table-striped' width="100%"   >
-    <thead >
-        <tr>
-            <th style="border-right:1px solid #ddd; ">Sno</th>
-            <th>Names</th>
-            <th>ID Number</th>
-            <th>Contacts</th>   
-            <th>Address</th>   
-            <th style="border-left:1px solid #ddd" class='text-primary'>ACTION</th>   
+    <thead style="border-bottom:2px solid #aaa; padding-bottom:5px ">
+        <tr >
+            <th style="border-right:1px solid #aaa; ">Sno</th>
+            <th>NAMES</th>
+            <th>ID NUMBER</th>
+            <th>CONTACTS</th>   
+            <th>ADDRESS</th>   
+            <th style="border-left:1px solid #aaa" class='text-primary'>ACTION</th>   
         </tr>
     </thead>
     <tbody>
         <?php foreach($search as $k=>$j): ?>
         <tr>
-            <td style="border-right:1px solid #ddd"><?=$k+1?></td>
+            <td class='pl-5' style="border-right:1px solid #aaa"><?=$k+1?></td>
             <td><?=$j->patient_names?></td>
             <td><?=$j->nationalid?></td>
             <td><?=$j->tel1?></td>
-            <td><?=$j->postaladdress?></td>
-            <td style="border-left:1px solid #ddd">
-            <a href="<?=base_url("patient/profile/".$j->id)?>" class="btn btn-sm btn-success"><i class="fa fa-user"></i> PROFILE</a>
+            <td><?=strtoupper($j->postaladdress)?></td>
+            <td style="border-left:1px solid #aaa">
+            <a href="<?=base_url("patient/profile/".$j->id)?>" class="btn btn-sm btn-success"><i class="fa fa-user"></i> VIEW</a>
+            </td>
+            <td >
             <a href="<?=base_url("patient/addcharge/".$j->id)?>" class="btn  btn-warning btn-sm"><i class="fa fa-dollar"></i> Charge</a>
+            </td>
+            <td >
             <a href="<?=base_url("doctor/diary/".$j->id)?>" class="btn  btn-sm btn-info ">Book</a>
             </td>
         </tr>

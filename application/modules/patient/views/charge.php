@@ -1,34 +1,38 @@
 <?php
-echo topic("Add charges");
-// pf($profile);
 $patient = $prof = current($profile);
-// pf($items);
-// pf($charges);
 $id = $prof->id;
+?>
+
+
+<h5 class='m-4 pull-left'><?=pflink($id);?></h5>
+<a href="<?=base_url('billing/recent/'.$id)?>" class="mt-4 pull-right btn alert-info btn-sm">PREVIOUS TXNS</a>
+<hr>
+<?php
+
+// echo topic("Add charges");
 $data["prof"]=$prof;
 $data["charges"]=$charges
 ?>
 
 
+<style>
+    h2 {
+        color:#ddd !important;
+    }
+</style>
 
 
 
 <?php 
-// $this->load->view("patient/stripe",["patient_details"=>$patient]);
-
-$sno = 1;
-$j = $charges;
-
+    $sno = 1;
+    $j = $charges;
     $this->load->view('billing/charge_sheet',$data);
 ?>
 
-<hr>
-<?=topic("previous charges")?>
+<!-- <hr> -->
+
 <div class="recent">
-<?php
-    // $url =  $this->load->view("billing/recent", [$data], TRUE);
-    // echo $url;
-?>
+
 </div>
 
 
@@ -58,11 +62,3 @@ $j = $charges;
     }
 </style>
 
-
-<script>
-$(document).ready(function(){ loadRecent(); })
-
-function loadRecent(){
-    $(".recent").load("<?=base_url('billing/recent/'.$patient->id)?>")
-}
-</script>

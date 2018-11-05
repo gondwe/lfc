@@ -9,7 +9,7 @@ class Systems extends CI_Controller {
     public function __construct(){
         parent::__construct();
         $this->load->library("ion_auth");
-        // $this->load->model("sys_model");
+        $this->load->model("sys_model");
         $this->load->model("patient_model");
         $this->check_access();
     }
@@ -39,7 +39,7 @@ class Systems extends CI_Controller {
             serve("dashboard",$data);
         }else{
             datalog("access attempt on admin dashboard");
-            protect($this-admin_msg);
+            protect($this->admin_msg);
         }
     }
 
@@ -54,7 +54,7 @@ class Systems extends CI_Controller {
         if($this->ion_auth->is_admin()){
             serve("developer",$data);
         }else{
-            protect($this-admin_msg);
+            protect($this->admin_msg);
         }
     }
 
@@ -67,8 +67,8 @@ class Systems extends CI_Controller {
 
 
     /* 
-    * redirect the the 404 overide route 
-    * redirect the the faqs route 
+    *   redirect the the 404 overide route 
+    *   redirect the the faqs route 
     */
     public function lost(){ serve("lost"); }
     
@@ -78,7 +78,7 @@ class Systems extends CI_Controller {
     
 
     /* 
-    * purge logs
+    *   purge logs
     */
     public function purge($what=null){
         if($this->accessible) {
@@ -99,7 +99,7 @@ class Systems extends CI_Controller {
     
 
     /* 
-    * serve & protect audit trail
+    *   serve & protect audit trail
     */
     public function audit_trail($date=null){
         if($this->accessible) {
@@ -114,5 +114,23 @@ class Systems extends CI_Controller {
     }
 
 
+    /* 
+    *   get notifications as they trickle in 
+    */
+    public function notifications($id=null){
+        $direct = $this->session->user_id ==  $id ? TRUE : FALSE;
+        // $groupq = '';
+        $array = ["mine"=>$direct];
+        echo json_encode($array);
+    }
+
+
+    /* mainly to handle queuing */
+    public function access_control(){
+        $data['groups'] = $this->ion_auth->groups()->result();
+        $data['group_cats'] = $this->db->where('a','group_cat')->get('dataconf')->result();       
+        $data['qtypes'] = $this->db->where('a','qtype')->get('dataconf')->result();       
+        serve('groupcat', $data);
+    }
 
 }

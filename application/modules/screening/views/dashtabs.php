@@ -1,81 +1,109 @@
 <?php 
 // pf($clinics);
+
+$today = fetch("select count(id) from patient_master where date = date(current_timestamp)");
 $cltype = $clinics["clinic_types"];
 $cat = $clinics["category_count"];
 ?>
 <div class="rowd">
-<div class="col-md-6 col-sm-6 col-lg-4 col-xs-12 pull-left">
-    <!-- <div class="card" style="width: 18em;"> -->
-        <div class="card-body">
-          <h5 class="card-title"></h5>
-          <ul class="">
-            <p class="alert bg-light">
-            <?php foreach($cltype as $k=>$c) : ?>
-            <a href="<?=base_url("patient/section/".$k)?>" class="btn <?=$k=="1"? "btn-primary" : "alert-dark" ?> btn-block btn-sm text-left">
-            <?=$c?> <span class="badge badge-secondary pull-right mt-1"><?=$cat[$c]?></span>
-            </a>
-            <?php endforeach; ?>
-            
-            <button class="btn btn-default btn-block btn-sm text-left">
-            <strong>Total</strong> <span class="mt-1 badge badge-primary pull-right"><?=array_sum($cat)?></span><br>
-            </button>
-            </p>
-          </ul>
-          <!-- <h6 >Private<span class="pull-right badge text-success">30</span></h6> -->
-          <!-- <h6 class="card-title">Total</h6> -->
 
-        <!-- <a href="#payments" class="btn btn-primary form-control">NEW PATIENT</a> -->
-      <!-- </div> -->
+    <div class="col-md-6 col-sm-6 col-lg-4 col-xs-12 pull-left text-center mb-3">
+        <div class="">
+            <div class="card-title p-1 bg-dark text-light">
+                PATIENTS THIS MONTH
+            </div>
+            <div class="card-body bg-warning">
+                <h1 class="font-weight-bold text-light">
+                <a class='text-light' href="<?=base_url('patient/section/1')?>">
+                <small class="font-weight-light h5">General</small > <?=$cat[current($cltype)]?>
+                </a>
+                |
+                <a class='text-light' href="<?=base_url('patient/section/2')?>">
+                <?=$cat[end($cltype)]?> <small class="font-weight-light h5">Private</small>
+                </a>
+                </h1>
+                <div class="card-text font-weight-light">Registered Patients Today <span class="font-weight-bold"><?=$today?></span></div>
+                <!-- <a href="#" class="btn btn-primary btn-sm  ml-3">View Txns</a> -->
+            </div>
+        </div> 
     </div>
-  </div> 
-<div class="col-md-6 col-sm-6 col-lg-4 col-xs-12 pull-left">
-    <!-- <div class="card" style="width: 18em;"> -->
-        <div class="card-body">
-          <h5 class="card-title text-danger"></h5>
-          <ul class="">
-            <p class="alert bg-light">
-            <button class="btn btn-dark btn-block btn-sm text-left">
-            MOBILE WORKSPACE
-              &nbsp
-            </button>
-            <button class="btn btn-secondary btn-block btn-sm text-left">
-              <!-- NEW PATIENT -->
-            &nbsp
-            </button>
-            <button class="btn btn-default btn-block btn-sm text-left">
-            &nbsp
-            <!-- <strong>Total</strong> <span class="mt-1 badge badge-primary pull-right">15</span><br> -->
-            </button>
-            </p>
-          </ul>
-      
-    </div>
-  </div> 
-<div class="col-md-6 col-sm-6 col-lg-4 col-xs-12 pull-left">
-    <!-- <div class="card" style="width: 18em;"> -->
-        <div class="card-body">
-          <h5 class="card-title text-danger"></h5>
-          <ul class="">
-            <p class="alert bg-light">
-            <a href="<?=base_url('patient/new')?>" class="btn btn-primary btn-block btn-sm text-left">
-              NEW PATIENT
-            </a>
-            <a href="<?=base_url('screening/osod')?>" class="btn alert-primary btn-block btn-sm text-left">
-            Screening
-            </a>
-            <a href="<?=base_url('patient/discharge')?>" class="btn alert-danger btn-block btn-sm text-left">
-              Discharge
-            <span class="mt-1 badge badge-primary pull-right">15</span><br>
-            </a>
-            </p>
-          </ul>
-          <!-- <h6 >Private<span class="pull-right badge text-success">30</span></h6> -->
-          <!-- <h6 class="card-title">Total</h6> -->
 
-        <!-- <a href="#payments" class="btn btn-primary form-control">NEW PATIENT</a> -->
-      <!-- </div> -->
+
+
+    <div class="col-md-6 col-sm-6 col-lg-4 col-xs-12 pull-left  mb-3">
+        <div class="">
+            <div class="card-title p-1 bg-dark text-light text-center">
+                PNO GENERATOR
+            </div>
+            <div class="card-body bg-dark">
+                <!-- <div class="font-weight-bold text-light">NEW PATIENT</div> -->
+                <h1 class="pt-3 text-center text-danger font-weight-bold"><?=autogen()?>/18</h1>
+            <!-- <a href="<?=base_url('patient/discharge')?>" class="pull-right mr-3 text-left">DISCHARGED <span class="mt-1 badge badge-primary pull-right">15</span></a> -->
+               
+            </div>
+        </div> 
     </div>
-  </div> 
+
+
+
+
+    <div class="col-md-6 col-sm-6 col-lg-4 col-xs-12 pull-left  mb-3">
+        <div class="">
+            <div class="card-title p-1 bg-dark text-light text-center">
+                ACTIONS TAB
+            </div>
+            <div class="card-body bg-light">
+                <!-- <div class="font-weight-bold text-light">NEW PATIENT</div> -->
+                <div class="bg-brown p-1 pl-2">
+            <a href="<?=base_url('patient/new')?>" class="text-light xy"> NEW PATIENT <i class="fa fa-plus text-warning"></i></a>
+                </div>
+                <div class="bg-blue p-1 pl-2">
+            <a href="<?=base_url('screening/osod')?>" class="text-light">SCREENING</a>
+                </div>
+                <div class="bg-brown p-1 pl-2">
+            <a href="<?=base_url('chaplain')?>" class="text-light">CHAPLAIN</a>
+                </div>
+               
+            </div>
+        </div> 
+    </div>
+
+
+
+
+
   </div> 
 
 <div class="row"></div>
+
+
+
+<style>
+  .card-heading bg-dark text-light p-1 {
+      padding: 2px;
+      padding-left: 10px;
+  }
+
+  .card-body {
+    padding:0px !important;
+  }
+
+  .card-hash {
+      margin-bottom:15px;
+  }
+  .bg-orange{ background:gold }
+  .bg-blue{ background:#1a7ee8 }
+  .bg-blue:hover{ background:teal;color:#fff !important; }
+  .bg-brown:hover{ background:teal;color:#fff !important; }
+  .bg-rebecca{ background:darkorange; }
+  .bg-brown{ background:dodgerblue; }
+
+  a {
+      text-decoration:none !important;
+  }
+
+  a.text-light:hover {
+    color: #9f1212 !important;
+}
+
+</style>

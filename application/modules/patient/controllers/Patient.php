@@ -3,83 +3,90 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Patient extends MX_Controller {
 
-	// protected $data;
-
 	public function __construct()
 	{
 		$this->load->model("patient_model");
+		$this->load->library("ion_auth");
+		$this->can_register_patient = ["admin","reception"];
 	}
 
 
+	public function index(){
+		$this->profile();
+	}
+
 	public function pfdata($id){ return $this->patient_model->profile($id); }
 
-	public function profile($id){
+	public function profile($id=null){
+		$id = $id ?? $_SESSION["activepatient"]; 
 		$data["profile"] = $this->pfdata($id);
 		serve("profile",$data);
 	}
 
-	public function diagnosis($id){
-		$data["prof"] = $this->pfdata($id);
-		serve("diagnosis",$data);
-	}
 
+	/* 
+	* serve a list of sections  
+	* general & private 
+	*/
 	public function section($section=null){
 		$data = $this->patient_model->clinics($section);
 		serve("clinic",$data);
 	}
 
-	// public function tablesearch(){
-	// 	$s = $this->input->post("x");
-	// 	if($s == ""){ 
-	// 		$data["search"]  = $this->recent();
-	// 	}else{
-	// 		$data["search"] = $this->patient->namesearch($s);
-	// 	}
-	// 	$this->load->view("screening/namesearch",$data);
-	// }
-
-
+	
 	public function edit($id){
 		$data["profile"]  = $this->pfdata($id);
 		serve("patient_edit",$data);
 	}
 
+
+	/* 
+	* new patient registration view
+	* require access to add new patient 
+	*/
 	public function new(){
-		redirect("crud/new/patient_master");
-		// $data["profile"] = $this->patient_model->profile($id);
+		if($this->ion_auth->in_group($this->can_register_patient)){
+			serve("new");
+		}else{ protect();}
 	}
 
-	public function addcharge($id){
 
+	/* 
+	* add charges to active  patient  
+	* ************ Waiting Demolition ******************
+	*/
+	public function addcharge($id=null){
+		$id = $id ?? $_SESSION["activepatient"]; 
 		$this->load->model("items/items_model");
 		$this->load->model("billing/bills_model");
-
+		
 		$data["profile"] = $this->pfdata($id);
 		$data["items"] = $this->items_model->itemslist(); 
 		$data["charges"] = $this->bills_model->chargesbyid($id);
 		
 		serve("charge",$data);
 	}
-
-	// function savecharge(){
-	// 	pf($_POST);
-	// }
-
-
-		
+	
+	
+	
+	
+	
+	/* 
+	* save added charges to active  patient  
+	* ************ Waiting Demolition ******************
+	*/
 	public function savecharge(){
 		if(isset($_POST["queries"])){
 
-			$sql = "";
 			$user = $this->session->user_id;		
 			$txn = time();
 
-			$post = $_POST["queries"];
+			// $post = $_POST["queries"];
 	
 			$sql = "";
-			foreach($post as $i=>$j){
+			foreach($_POST["queries"] as $i=>$j){
 				$a = $j[1];$b = $j[0];$c = $j[2];
-				$sql .= "insert into tbl_charges (txn, charge_id, item_id, quantity, user_id) values ('$txn','$a','$b','$c','$user');";
+				$sql .= "insert into tbl_charges (txn, charge_id, item_id, quantity, user_id) values ('$txn','$a','$b','$c','$this->session->user_id');";
 			}
 		
 			$sql = array_filter(explode(";",$sql));
@@ -94,5 +101,56 @@ class Patient extends MX_Controller {
 	public function discharge(){
 		$data = $this->patient_model->recent();
 		serve("discharge",$data);
+	}
+
+
+	/* 
+	* retrieve patient related  services
+	* @param:servicename
+	* @return:serviceview  
+	*/
+	public function svc($service=null){
+		if(file_exists(APPPATH."modules/patient/views/".$service.".php")){
+			$data = $this->patient_model->recent();
+			serve($service,$data);
+		}else{
+			render("service_not_found");
+		}
+	}
+
+
+	public function mwork(){
+		$data = [];
+		serve("mwork",$data);
+	}
+
+
+
+	/* 
+	* search patient using id 
+	* ajax calls Only !
+	*/
+	public function find($id, $field = null){
+		// header("Access-Control-Allow-Origin : *");
+		$data = $this->patient_model->find($id);
+		$data = $data->$field ?? $data; 
+		echo json_encode($data);
+	}
+
+
+	/* 
+	* raise patient id on session service 
+	* @param :patient id
+	*/
+	public function svc_activate($svc,$id){
+		$_SESSION[$svc] = $id;
+	}
+
+
+	/* 
+	* set the active profile tab 
+	*/
+	public function setpf_tab($active){
+		$_SESSION["pftab"] = $active;
 	}
 }

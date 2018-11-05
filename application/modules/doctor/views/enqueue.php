@@ -4,6 +4,9 @@
 echo topic("Book Patient");
 echo "<h2 >".pflink($id)."</h2>";
 
+
+
+
 ?>
 <hr>
 <form action="<?=base_url('doctor/book')?>" method="post" class="row m-2">

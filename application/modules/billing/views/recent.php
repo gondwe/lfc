@@ -1,5 +1,7 @@
-
-
+<h5 class="m-5">
+    <?=topic('previous transactions')?>
+</h5>
+<hr>
 <div class="accordion" id="accordionExample">
 <?php
 // pf($charges);
@@ -11,11 +13,12 @@ $x = 1;
       <h5 class="mb-0">
         <div class="links pt-2 pl-3 pb-2 <?=$x? null : 'collapsed'?>" type="" data-toggle="collapse" data-target="#collapse<?=$x?>" aria-expanded="true" aria-controls="collapse<?=$x?>">
           <small class="text-dark ">
-                <span class="badge badge-<?=current($chrglist)->a_status? 'success' : 'danger' ?> ">
-                <i class="fa fa-<?=current($chrglist)->a_status? 'check' : 'minus' ?>"></i></span>
+                <span class="fa fa-check-circle text-<?=current($chrglist)->a_status? 'success' : 'danger' ?> ">
+                
+                </span>
                 <strong class='text-secondary'>TXN No.<?=current($chrglist)->txn?> </strong>/ <?=date_format(new DateTime(current($chrglist)->date),'jS F, Y G:i:s')?>
-                <a href="<?=base_url('billing/paybill/'.$txn)?>" class="pull-right btn badge-<?=current($chrglist)->a_status? 'primary' : 'warning' ?> btn-sm">
-                    <?=current($chrglist)->a_status == 0 ? 'PAY' : (current($chrglist)->a_status == 1 ? "VIEW RECEIPT" : "BALANCE" ) ?>
+                <a href="<?=base_url('billing/paybill/'.$txn)?>" class="pull-right mb-1 mr-2 btn btn-<?=current($chrglist)->a_status? 'success' : 'warning' ?> btn-sm">
+                    <?=current($chrglist)->a_status == 0 ? 'PAY' : (current($chrglist)->a_status == 1 ? "VIEW" : "BAL" ) ?>
                 </a>
                
                 </span>

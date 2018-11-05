@@ -20,7 +20,7 @@ foreach($data as $d=>$x){
 
     echo "
     <div class=''>
-        <div class='alert alert-dark pb-10 pl-10 pt-10 col-sm-12 text-secondary rowd mt-3' 
+        <div class='text-dark pb-10 pl-10 pt-10 col-sm-12 text-secondary rowd mt-3' 
         style='border-bottom:1px solid #eee;'>
         <span class='col-sm-2'>".datef($x->date)."</span>
         <span class='col-sm-2'> KES ".number_format($x->amount,2)."</span>

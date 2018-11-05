@@ -1,231 +1,80 @@
-<?php
-    $prof = current($profile);
-    // pf($prof);
+
+<?php $prof = current($profile); ?>
+<div class="m-2">
+<?php 
+
+    echo topic("Patient profile");
+
+    // unset($_SESSION["pftab"]);
+    $pftab = $this->session->pftab ?? "details-tab";
+
+    // pf($pftab);
+
 
 ?>
 
-<h1 class='col-xs-12 col-sm-10 col-md-12 col-lg-6'>
-    <span class=''><?=rxx($prof->patient_names)?> 
-        <span class="text-danger"> | pNo.<?=str_pad($prof->id,4,"0", STR_PAD_LEFT)?> </span></span></h3>
+<div class="m-3">
+<ul class="nav nav-tabs" id="myTab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link <?=$pftab === "details-tab" ? 'active' : null ?>" id="details-tab" data-toggle="tab" href="#details" role="tab" aria-controls="details" aria-selected="false">PATIENT INFO</a>
+  </li>
+  <li class="nav-item ">
+    <a class="nav-link <?=$pftab === "home-tab" ? 'active' : null ?>" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-selected="true">DIAGNOSIS</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link <?=$pftab === "presc-tab" ? 'active' : null ?>" id="presc-tab" data-toggle="tab" href="#presc" role="tab" aria-controls="presc" aria-selected="false">PRESCRIPTION</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link <?=$pftab === "misc-tab" ? 'active' : null ?>" id="misc-tab" data-toggle="tab" href="#misc" role="tab" aria-controls="contact" aria-selected="false">MISC</a>
+  </li>
 
-                <a href='<?=base_url('patient/edit/'.$prof->id)?>' class="btn btn-sm btn-primary ml-3 ">
-                <i class="fa fa-edit"></i> EDIT BASIC INFO</a>
-
-<hr>
-            <div class="btnlist" ></div>
-
-
-<div class="contents">
-
-
-<div class="ml-5">
-<span id="basic"  onclick="showhide(this)" class="alert alert-light rowd" style='border-bottom:1px solid #ddd'>
-<a id=""class='h5 title text-success'>Basic Information</a>
-<i class='fa fa-chevron-down pull-right text-primary'></i>
-</span>
-<?php $this->load->view("profiletabs", ["prof"=>$prof]); ?>
-</div>
-<hr>
-
-<div class="ml-5">
-<span id="diagnosis"  onclick="showhide(this)" class="alert alert-info rowd">
-<span id=""class='h5 title text-success'>Diagnosis</span>
-<i class='fa fa-chevron-down pull-right text-primary'></i>
-</span>
-<?php $this->load->view("Diagnosis", ["prof"=>$prof]); ?>
-</div>
-<hr>
-
-<div class="ml-5">
-<span id="prescription"  onclick="showhide(this)" class="alert alert-info rowd">
-<span id=""class='h5 title text-success'>Prescription</span>
-<i class='fa fa-chevron-down pull-right text-primary'></i>
-</span>
-<?php $this->load->view("prescription", ["prof"=>$prof]); ?>
-</div>
-<hr>
-
-<div class="ml-5">
-<span id="refraction"  onclick="showhide(this)" class="alert alert-info rowd">
-<span id=""class='h5 title text-success'>Refraction</span>
-<i class='fa fa-chevron-down pull-right text-primary'></i>
-</span>
-<?php $this->load->view("refraction", ["prof"=>$prof]); ?>
-</div>
-<hr>
-
-<div class="ml-5">
-<span id="paed"  onclick="showhide(this)" class="alert alert-info rowd">
-<span id=""class='h5 title text-success'>Paediatric</span>
-<i class='fa fa-chevron-down pull-right text-primary'></i>
-</span>
-<?php $this->load->view("paed", ["prof"=>$prof]); ?>
-</div>
-<hr>
+</ul>
 
 
-<div class="ml-5">
-<span id="lab"  onclick="showhide(this)" class="alert alert-info rowd">
-<span id=""class='h5 title text-success'>Lab/ Surgery</span>
-<i class='fa fa-chevron-down pull-right text-primary'></i>
-</span>
-<?php $this->load->view("lab", ["prof"=>$prof]); ?>
-</div>
-<hr>
 
+<div class="tab-content" id="myTabContent">
+  <div class="tab-pane fade <?=$pftab === "details-tab" ? 'show active' : null ?>" id="details" role="tabpanel" aria-labelledby="details-tab">
+  <?=$this->load->view('editprofile')?>
+  </div>
+  
+  <div class="tab-pane fade <?=$pftab === "home-tab" ? 'show active' : null ?>" id="home" role="tabpanel" aria-labelledby="home-tab">
+    <?=$this->load->view('diagnosis')?>
+  </div>
+
+
+  <div class="tab-pane fade <?=$pftab === "presc-tab" ? 'show active' : null ?>" id="presc" role="tabpanel" aria-labelledby="presc-tab">
+    <?=$this->load->view('prescription')?>
+  </div>
+
+  <div class="tab-pane fade" id="misc" role="tabpanel" aria-labelledby="misc-tab">
+    <div class="p-5">
+      <p><a href="<?=base_url('patient/svc/refraction')?>" class="btn btn-primary btn-sm m-2">REFRACTION</a></p>
+      <p><a href="<?=base_url('patient/svc/lab')?>" class="btn btn-primary btn-sm m-2">LAB & SURGERY</a></p>
+      <p><a href="<?=base_url('patient/svc/paed')?>" class="btn btn-primary btn-sm m-2">PAEDIATRIAC</a></p>
+      <p><a href="<?=base_url('patient/svc/bills')?>" class="btn btn-primary btn-sm m-2">BILLING</a></p>
+    </div>
+  </div>
 
 
 </div>
+</div>
+
 
 
 <script>
-    const watch =  ["diagnosis","prescription","refraction","paed","lab"];
-    const watchall =  ["basic","diagnosis","prescription","refraction","paed","lab"];
-    
-
-
-    function justhide(h){
-        // h = $(h);
-
-        kid = $(h).next()[0];
-        $(h).next().hide();
-        // kid.hide();
-        $(kid).removeClass("fa-chevron-down");
-        // pf(kid);
-        // $("#"+h[0]+"id").next().hide();
-    }  
-
-    function showhide(h){
-        $.each(watchall, function(i,val){
-            asic = document.querySelector("#"+val);
-            justhide(asic);
-        })
-        
-        h = $(h);
-        kid = h[0].lastElementChild;
-        // pf(h)
-        $(kid).toggleClass("fa-chevron-left fa-chevron-down  text-danger");
-        $("#"+h[0].id).next().slideToggle();
-    }  
-
-    const hide2 = (h)=>{;
-        kid = h;
-        h = $(h).parent()[0].firstElementChild;
-        $(kid).toggleClass("fa-chevron-left fa-chevron-down  text-danger");
-        $("#"+h.id).next().next().slideToggle();
-    }
-        
-    const hidewatch = ()=>{
-        $.each(watchall, function(i,val){
-            asic = document.querySelector("#"+val);
-            justhide(asic);
-        })
-    }
-
-    function short(v){
-        $.each(watchall, function(i,val){
-            asic = document.querySelector("#"+val);
-            justhide(asic);
-        })
-        h = $(v);
-        kid = h[0].lastElementChild;
-        // pf(h)
-        $(kid).toggleClass("fa-chevron-left fa-chevron-down  text-danger");
-        $("#"+h[0].id).next().slideToggle();
-    }
-    $(document).ready(()=>{
-        //hidewatch();
-        $.each(watch, function(i,val){
-            asic = document.querySelector("#"+val);
-            justhide(asic);
-            btn = '<button onclick="short('+val+')" class="mr-2 btn-light btn">'+val.toUpperCase()+'</button>';
-            $(".btnlist").append(btn)
-        })
-    });
-
+  $(".nav-link").click(function(){
+    $.post("<?=base_url('patient/setpf_tab/')?>" + this.id )
+  })
 </script>
+
 
 
 <style>
-    .hidden {
-        visibility:collapse;
-        display:none;
-    }
-    .uline {
-        border-bottom: 7px solid #ddd;
-        padding-bottom: 10px;
-        width:100%;
-    }
-    .contents {
-        margin-left:-30px;
-    }
-    .mr-5 {
-        margin-right:5px;
-    }
-
-    .ml-5 {
-        /* border-bottom:1px solid #edd; */
-    }
-
-    .title {
-        text-decoration:none !important;
-    }
-
-    .btnlist {
-        display:contents;
-    }
-
-    .btn-outline-success {
-        /* background: #673AB7;
-        color: aliceblue; */
-    }
+.tab-pane {
+  background:#fff !important;
+  height: -webkit-fill-available;
+}
+.nav-link:hover {
+  color:red !important ;
+}
 </style>
-
-
-<script>
-    // // pos = -1;
-    // // $(".ssx").keyup(function(e){
-    // //     dis = $(this).next().next();
-    // //     n = dis[0].childElementCount;
-    // //     nodes = dis[0].childNodes;
-    // //     // pf(nodes);
-    // //     key = e.keyCode;
-    // //         if(key == 40 ){
-    // //             pos++
-    // //             pf(n)
-    // //             pf(pos)
-    // //             $.each(nodes,function(k,v){
-    // //                 $(v).css("background","white");
-    // //             })
-    // //             if(pos == n) pos = 0
-    // //             $(nodes[pos]).css("background","yellow");
-                
-    // //         }else if(key == 13){
-    // //             sl = $(nodes[pos]);
-    // //             lod(sl[0]);
-    // //         }else if(key == 38){
-    // //             $.each(nodes,function(k,v){
-    // //                 $(v).css("background","white");
-    // //             })
-    // //             if(pos <= 0){ pos = n-1 } else { pos--; }
-    // //             $(nodes[pos]).css("background","yellow");
-
-    // //         }else{
-    // //         val = $(this).val().trim();
-    // //         if(val !== ""){
-    // //             w = $(this).css("width");
-    // //             vali = '<li style="" class="form-control" onclick=lod(this)>'+val+'something</div>';
-                
-    // //             $(dis).css("width",w);
-    // //             dis.append(vali);
-    // //         }
-    // //     }
-    // // })
-
-    // // lod = (e)=>{
-    // //     item = e.innerHTML;
-    // //     $(e).parent().prev().prev().val(item);
-    // //     $(e).parent().html("");
-    // //     pos = 0;
-    // // }
-</script>

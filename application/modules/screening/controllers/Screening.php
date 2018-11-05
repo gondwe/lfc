@@ -22,8 +22,20 @@ class Screening extends MX_Controller {
 	}
 
 
-	function osod(){
-		$data["recent"] = $this->recent()["recent"];
+	function osod($id=null){
+		$this->session->screening = isset($this->session->screening) ? $this->session->screening : $this->session->activepatient;
+		// $this->patient_model->qstack("screeningq", "set", $this->session->activepatient);
+		
+
+		// throw me in the queue temporarily
+		// qstack("screeningq", "set", $this->session->screening);
+
+		$id = $id ?? $this->session->screening;
+		$data["id"] = $id;
+		$recent = $this->patient_model->profile($id);
+		$scrn = $this->patient_model->screening($id);
+		$data["recent"] = empty($recent)? array() : current($recent);
+		$data["screening"] = empty($scrn)? array() : end($scrn);
 		serve("main",$data);
 	}
 
@@ -42,13 +54,56 @@ class Screening extends MX_Controller {
 
 
 	
-	function query(){
-		pf($_POST);
+	function query($id=null){
+		$recent = $this->patient_model->profile($id);
+		$scrn = $this->patient_model->screening($id);
+		$data ["prof"] = $recent;
+		$data ["scrn"] = $scrn;
+		//$data = gl("select p.*, age(dob) as age, dc.b as ptype from patient_master as p , dataconf as dc where dc.id = p.category and p.id = '$id'");
+		
+		
+		if(!empty($data["prof"])){
+			$_SESSION['screening'] = $id;
+		} else {
+			notice('PATIENT NO. NOT FOUND',2);
+		}
+
+		echo json_encode($data);
 	}
 
 	
-	function update(){
-		pf($_POST);
+	function update($pid = null, $ref = null){
+		// pf($_POST);
+		if(isset($_POST["pid"])){
+			if($_POST["pid"]==""){
+				notice("Patient Number not detected. Kindly Search No.",1);
+			}else{
+				$p = $_POST;
+				$od = $p["rf"];
+				$os = $p["lf"];
+				$cc = trim($p["cc"]);
+				$pid = $p["pid"];
+				$record_exists = fetch("select id from screening where date <> curdate() and pid = '$pid' ");
+				// var_dump($record_exists);
+				if($record_exists){
+					$sql = "update screening set od = '".$od."', os = '".$os."', cc = '".$cc."' where pid = '".$od."' ";
+				}else{
+					$sql = "insert into screening (pid, od, os, cc ) values( '".$pid."', '".$od."', '".$os."', '".$cc."' )";
+				}
+				// pf($sql);
+				if(process($sql)) {
+					notice("Data Saved Successfully");
+					manage_stack("screening","chaplain", $pid);
+				}
+				
+				// $_SESSION['screening'] = $pid;
+			}
+		}
+		$ref = $ref ?? "screening/osod/".$pid;
+		$ref = str_replace(".","/",$ref);
+		
+		// pf($ref);
+		redirect($ref);
 	}
 
 

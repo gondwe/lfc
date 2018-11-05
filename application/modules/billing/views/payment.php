@@ -1,34 +1,32 @@
 <?php 
 
-// pf($rec);
-    // $amount = $rec->amount;
-    $paid = $costing - $paidup;
-    $bill_to = current($bill_to);
+$paid = $costing - $paidup;
+$bill_to = current($bill_to);
 
-    // $lastpay = fetch("select amount from tbx_transact where id = (select max(id) from tbx_transact where txnid = '$billno') ");
 
-    // pf($paidup);
+?>
+<h5 class='ml-5 mt-3' ><?=pflink($bill_to->id)?></h5>
+<hr>
+<?php 
 
+    
     $names = $bill_to->patient_names;
-
     $total = array_sum(array_column(current($charges),"total"));
 
-    // $this->load->view("patient/stripe",["patient_details"=>$bill_to]);
-
-    $invoicelink = $bill_status == 1? null : "href=".base_url("billing/invoice/".$billno);
+    
 
 ?>
 
-<!-- <h4><?=rx($names)?></h4> -->
+<?php 
+
+if($bill_status <> 1 ){
+    $invoicelink = base_url("billing/invoice/".$billno);
+    echo '<a href="'.$invoicelink.'" class="pull-right btn btn-sm alert-primary btn-primary">INVOICE</a>';
+}
+?>
 
 
-
-<a class="pull-right btn btn-sm alert-primary btn-primary <?=$bill_status ==1? 'btn-disabled' : null ?>" <?=$invoicelink?> >INVOICE</a>
-
-<p><?=$bill_status==1? "<button class='btn btn-lg  btn-light alert-success'><span>PAID</span></button>" : 
-($bill_status == 3? "<button class='btn btn-sm badge-pill btn-danger '>PAID $paid BALANCE $paidup </button>
-
-" : "<button class='btn  badge-pill btn-light alert-danger'>PENDING</button>" ) ?></p>
+<p><?=$bill_status==1? "<button class='btn btn-lg  btn-success pull-right'><span>PAID</span></button>" : ($bill_status == 3? "<button class='btn btn-sm badge-pill btn-danger '>PAID $paid BALANCE $paidup </button>" : "<button class='btn  badge-pill btn-light alert-danger'>PENDING</button>" ) ?></p>
 
 
 
@@ -50,7 +48,7 @@ $this->load->view('charge_section', $cdata);
 
 
 
-<div class="rowd"></div>
+<!-- <div class="row"></div> -->
 <hr>
 
 

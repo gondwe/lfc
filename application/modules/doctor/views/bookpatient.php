@@ -23,10 +23,11 @@ $p = current($patient);
 <?php 
 
 $procedures = ["Incision and drainage","Fb Removal","Suture Removal"];
-$drlist = ["Dr. Matende","Dr. Korir"];
+$drlist = $doctors;
 $patlist = 30;
 
 $row = [1,2];
+
 
 // // fetch upcoming dates in diary
 // ====================================
@@ -49,8 +50,7 @@ foreach($row as $r){
 <style>
     #pcount {
         font-size:50px;
-        color:#ddd !important
-
+        color:#ddd !important;
     }
 </style>
 
@@ -150,7 +150,6 @@ $("form").submit(function(e){
     e.preventDefault(e);
     $.post($(this).attr("action"),{"data":$(this).serialize()},(response)=>{
         // console.log(response);
-      
         $("#exampleModal").modal("hide");
     })
 });

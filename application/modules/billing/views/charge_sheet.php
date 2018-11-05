@@ -5,15 +5,15 @@
     td {padding: 2px 1px 0px 15px;}
 </style>
 
-<div class="col-md-6 pull-left">
+<div class="col-md-6 pull-left" style="border-right:1px solid #dcdcdc">
 <div class="input-group">
 <input type="text" required placeholder="Search" class="ssx form-control col-md-10 col-sm-8 col-xs-8" data-link="items-search" data-funct="showvals();" autofocus>
 <input type="hidden" name="realval[]" id="realval">
 <ul type="text" id="list"></ul>
 <input type="number" placeholder="Qty" class="form-control col-md-2 col-sm-4 col-xs-4" required id="rate">
 <div class="rowd m-2">
-<h1 >x <span id='itemrate'>00</span>.0</h1>
-<h3 id='itemname'>Search Item</h3>
+<h1 style='color:#ddd !important'>x <span id='itemrate' >00</span>.0</h1>
+<h3 style='color:#ddd !important' id='itemname'>Search Item</h3>
 </div>
 </div>
 
@@ -27,7 +27,7 @@
 <ol id="charges" class="alert rowd"></ol>
 <p class='text-dark alert alert-secondary'>TOTAL KES : <span id='total'>0</span></p>
 
-<button onclick="savecharge()" class="btn btn-info btn-sm pull-right">CHARGE & SAVE</button>
+<button onclick="savecharge()" class="btn btn-primary pull-right">CHARGE & SAVE</button>
 </div>
 
 <script>

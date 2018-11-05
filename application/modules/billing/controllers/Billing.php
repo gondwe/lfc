@@ -77,7 +77,8 @@ class Billing extends MX_Controller {
         // $data["charges"]=$charges;
         $data["charges"] = $this->bills_model->chargesbyid($id);
         // $(".recent").load("<?=base_url('billing/recent/'.$patient->id)");
-        $this->load->view("recent",$data);
+        // $this->load->view("recent",$data);
+        serve("recent",$data);
     }
 
 
@@ -133,6 +134,11 @@ class Billing extends MX_Controller {
         $data["p_options"] = $this->bills_model->p_options;
         $data["bill_status"] = $this->bills_model->bill_status($txn);
         render("receipt",$data);
+    }
+
+    public function activecharge($txn=null){
+        $data = [];
+        render("activecharge",$data);
     }
 
 }

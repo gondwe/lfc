@@ -3,7 +3,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Items extends MX_Controller {
 
-
+	public function index(){
+		$data = [];
+		render("drugstore",$data);
+	}
 
 	public function listing(){
 		$this->page_render->_([], "Items, overview", 'items/listing');

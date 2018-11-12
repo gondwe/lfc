@@ -19,13 +19,33 @@ class Chaplain extends MX_Controller {
 
         $this->session->chaplain = $patient = empty($pq)? $this->patient_model->activepatient() : current($pq);
         $data["patient"] = $patient;
-        $data["category"] = $this->pcat;
-        $data["section"] = $this->db
-                        ->where("d.a", "patient_type")
-                        ->select("d.b")->from("dataconf d")
-                        ->join("patient_master m", "d.id = m.category")
-                        ->get()
-                        ->row("b");
+        $cat = fetch("select b from dataconf where a = 'patient_type' and id = (select category from patient_master where id = '$patient')");
+        $data["category"] = $cat;
+        $data["section"] = $cat;
+
         serve("dashboard", $data);
     }
+
+    public function religion(){
+        $data = [];
+        serve("religion",$data);
+    }
+
+	
+	function query($id=null){
+		$data ["prof"] = $this->patient_model->profile($id);
+		$data ["chaplain"]  = $this->patient_model->chaplain($id);
+		// $data ["prof"] = $recent;
+		// $data ["chaplain"] = $chaplain;
+
+		if(!empty($data["prof"])){
+			$_SESSION['screening'] = $id;
+		} else {
+			notice('PATIENT NO. NOT FOUND',2);
+		}
+
+		echo json_encode($data);
+	}
+
+
 }

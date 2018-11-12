@@ -1,53 +1,126 @@
-<?php 
 
-pf($recent_msgs);
+
+<?php 
+$g2 = $chatlist;
+$first = array_shift($chatlist);
+
+if(empty($first)){ echo topic("No Messages"); $this->load->view("msg_start", ["ul"=>$userlist]);
+
+}else {
+$active = $this->session->activechat ?? $first->id;
+
+
+$factive = $first->id == $active ? 'green' : null;
+$showactive = $first->id == $active ? 'show active' : null;
 
 ?>
 
-<div class="bd-example bd-example-tabs pt-3">
-  <div class="row">
-  
-    <div class="col-3">
-    <div class="d-flex pb-3 text-danger font-weight-bold">Users</div>
-      <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-        <a class="nav-link active" id="v-pills-home-tab" data-toggle="pill" href="#v-pills-home" role="tab" aria-controls="v-pills-home" aria-selected="true">
-        <i class="fa fa-user-circle"></i> Alfred Kimani
-        </a>
-        <a class="nav-link" id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="false">
-            James Ndungu
-        </a>
-        <a class="nav-link" id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false">
-            Grace Nanjala
-        </a>
-        <a class="nav-link" id="v-pills-settings-tab" data-toggle="pill" href="#v-pills-settings" role="tab" aria-controls="v-pills-settings" aria-selected="false">
-            Ben Gondwe
-        </a>
-      </div>
-      <div class="d-flex pb-3 text-success font-weight-bold">View All Users</div>
-    </div>
-    <div class="col-9 row">
-        <div class="pb-3 text-success font-weight-bold">
-            <span class="pull-left"><a href="http://">Chat History</a></span>
-            <span class="float-right"><a class="text-secondary" href="http://">All Messages</a></span>
+<div class="bg-white p-3">
+  <div class="card-body">
+    <div class="bd-example bd-example-tabs pt-3">
+      <div class="row">
+      
+        <div class="col-sm-3">
+        <div class="d-flex pb-3 text-danger font-weight-bold">USERS</div>
+          <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+            <a class="d-block px-2 text-secondary active <?=$factive?>" id="v-pills-<?=$first->id?>-tab" data-toggle="pill" data-id="<?=$first->id?>" href="#v-pills-<?=$first->id?>" role="tab" aria-controls="v-pills-<?=$first->id?>" aria-selected="true">
+                <?=rxx($first->username,2)?>
+            </a>
+          <?php foreach ($chatlist as $value): ?>
+            <a class="d-block px-2 text-secondary <?=$factive = $value->id == $active ? 'green' : null;?>" data-id='<?=$value->id?>' id="v-pills-<?=$value->id?>-tab" data-toggle="pill" href="#v-pills-<?=$value->id?>" role="tab" aria-controls="v-pills-<?=$value->id?>" aria-selected="false">
+                <?=rxx($value->username,2)?>
+            </a>
+          <?php endforeach;?>
+          </div>
         </div>
-      <div class="tab-content alert-primary pt-5 p-3" id="v-pills-tabContent">
-        <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab">
-          <p>Cillum ad ut irure tempor velit nostrud occaecat ullamco aliqua anim Lorem sint. Veniam sint duis incididunt do esse magna mollit excepteur laborum qui. Id id reprehenderit sit est eu aliqua occaecat quis et velit excepteur laborum mollit dolore eiusmod. Ipsum dolor in occaecat commodo et voluptate minim reprehenderit mollit pariatur. Deserunt non laborum enim et cillum eu deserunt excepteur ea incididunt minim occaecat.</p>
-        </div>
-        <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
-          <p>Culpa dolor voluptate do laboris laboris irure reprehenderit id incididunt duis pariatur mollit aute magna pariatur consectetur. Eu veniam duis non ut dolor deserunt commodo et minim in quis laboris ipsum velit id veniam. Quis ut consectetur adipisicing officia excepteur non sit. Ut et elit aliquip labore Lorem enim eu. Ullamco mollit occaecat dolore ipsum id officia mollit qui esse anim eiusmod do sint minim consectetur qui.</p>
-        </div>
-        <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
-          <p>Fugiat id quis dolor culpa eiusmod anim velit excepteur proident dolor aute qui magna. Ad proident laboris ullamco esse anim Lorem Lorem veniam quis Lorem irure occaecat velit nostrud magna nulla. Velit et et proident Lorem do ea tempor officia dolor. Reprehenderit Lorem aliquip labore est magna commodo est ea veniam consectetur.</p>
-        </div>
-        <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab">
-          <p>Eu dolore ea ullamco dolore Lorem id cupidatat excepteur reprehenderit consectetur elit id dolor proident in cupidatat officia. Voluptate excepteur commodo labore nisi cillum duis aliqua do. Aliqua amet qui mollit consectetur nulla mollit velit aliqua veniam nisi id do Lorem deserunt amet. Culpa ullamco sit adipisicing labore officia magna elit nisi in aute tempor commodo eiusmod.</p>
+        <div class="col-sm-9 d-block" style="border-left:1px solid #dcdcdc">
+            <div class="text-success">
+            <span class="" data-toggle="modal" data-target="#exampleModalCenter"><i class="fa fa-plus-circle text-danger"></i></span>
+            </div>
+            <div id="chatthread"></div>
+            <hr>
+            <input data-to="<?=$active?>" type="text" id="chat" required placeholder="New Message" class="pill form-control">
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<style>
 
-</style>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalCenterTitle">New Message</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        
+        <?php $this->load->view("msg_start", ["ul"=>$userlist])?>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<link rel="stylesheet" href="<?=base_url('assets/js/recent_messages.css')?>">
+<!-- <script src="<?=base_url('assets/js/recent_messages.js')?>"></script> -->
+
+<script>
+    // activate selected member in list 
+    $("#v-pills-tab  > a.d-block").click(function(){
+      id = $(this).data("id");
+      $(this).siblings().removeClass("green")
+      $(this).addClass('green');
+      $.get('activechat/set/'+ id).done( fetchTalk(id))
+    })
+
+    // load the latest buddy from session 
+    $(document).ready(function(){
+      active = "<?=$active?>"; fetchTalk(active);
+    } );
+
+    // retrieve talks with budddy 
+    function fetchTalk(id) { $.get( 'activechat/get/'+  id, function(res){ $("#chatthread").html(res) }) }
+
+    // bleep with websocket
+    function writeName(id,msg) { 
+      var block = new Object()
+            block.from = "<?=$this->session->user_id?>";
+            block.to = id;
+            block.msg = msg;
+      send(JSON.stringify(block));
+    }
+
+    // send chat msg to selected buddy
+    $("#chat").keyup(function(e){
+      const msg = $(this).val()
+        if(e.keyCode == 13){
+            const id = $(this).data("to")
+            const url = "activechat/send/" + id ;
+            $.post(url, {"p":msg})
+              .done( function(){ fetchTalk(id) } )
+              .done( function(){ writeName(id, msg); })
+              .done( $(this).val("") )
+        }
+    });
+
+</script>
+
+
+<?php 
+
+}
+
+?>

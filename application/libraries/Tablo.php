@@ -30,6 +30,8 @@ class Tablo extends fieldsets{
 	public $lg = "4";
 	public $md = "6";
 	public $sm = "12";
+	public $valuetype;
+	public $hidden=[];
 	
 	
 	private $fieldtypes;
@@ -38,7 +40,7 @@ class Tablo extends fieldsets{
 	// private $reserved = [];
 	
 	
-	function __construct($tbl=null){ $this->db = db(); $this->table = $tbl; $this->hide("sid,scode"); }
+	function __construct($tbl=null, $cat = null){ $this->db = db(); $this->valuetype = $cat; $this->table = $tbl; $this->hide("sid,scode"); }
 	
 	
 	function init($id=null){
@@ -88,15 +90,15 @@ class Tablo extends fieldsets{
 		</div>';	
 		}
 
-		echo '<link rel="stylesheet" href="'.base_url('assets/css/jquery-ui.css').'">';
-		echo '<link rel="stylesheet" href="'.base_url('assets/css/dataTables.jqueryui.min.css').'">';
+		// echo '<link rel="stylesheet" href="'.base_url('assets/css/jquery-ui.css').'">';
+		// echo '<link rel="stylesheet" href="'.base_url('assets/css/dataTables.jqueryui.min.css').'">';
 		echo'<table id="example" class="display striped" style="width:100%;">';
 		echo "<thead>";
 			echo "<tr id='tablohead' class='text-light'>";
 				echo "<th  style='border-right:1px solid #ddd;'>SNO</th>";
 			foreach($this->fieldnames as $ff):
 				if(!in_array($ff,$this->reserved)){ $fg = strtolower($ff);
-					if($fg !== "scode") { $fh = isset($this->aliases[$fg]) ? $this->aliases[$fg] : $ff; echo "<th>".strtoupper(rxx($fh))."</th>"; }
+					if($fg !== "scode") { $fh = isset($this->aliases[$fg]) ? $this->aliases[$fg] : $ff; echo "<th class='px-2'>".strtoupper(rxx($fh))."</th>"; }
 				}
 			endforeach;
 			if(!empty($this->buttons)){$span = count($this->buttons); $actions = $span>1? "s" : null; echo "<th colspan='$span'>Action$actions</th>";}
@@ -131,7 +133,7 @@ class Tablo extends fieldsets{
 				}
 			}
 
-			echo $this->edit ? "<td><a data-toggle='tooltip' title='Edit' href='".base_url('crud/edit/'.$this->table."/".$dd['id'])."'><i class='fa fa-edit text-primary' style='color:#800f7b'></i></a></td>" : null;
+			echo $this->edit ? "<td><a data-toggle='tooltip' title='Edit' href='".base_url('crud/edit/'.$this->table."/".$dd['id']."/".$this->valuetype)."'><i class='fa fa-edit text-primary' style='color:#800f7b'></i></a></td>" : null;
 			$urlx = base_url("crud/delete/".$this->table."/".$dd['id']);
 			echo $this->delete ?  "<td><a data-toggle='tooltip' title='Delete'  class='' onclick='dltr(\"".$urlx."\",\"".$dd['id']."\");'><i class='fa fa-trash-o text-danger'></i></a></td>" : null;
 			echo "</tr>";
@@ -166,35 +168,46 @@ class Tablo extends fieldsets{
 
 	}
 	
+	/* create a new input form */
 	public function newform(){
 		$this->init();
 		$_SESSION["action"] = "insert";
-		
 		echo "<form action='".base_url('crud/insert/'.$this->table)."' enctype='multipart/form-data'  method='post'>";
-		foreach($this->fields as $id=>$f):
-			$this->fieldset($f);
-		endforeach;
-		
-		echo "<input type='hidden' name='tbl_name' class='' value='".$this->table."'>";
-		$this->submitbtn($this->table);
+			/* call form fields */
+			$this->form_fields();
+			/* add hidden fields */
+			foreach($this->hidden as $k=>$h){ echo "<input type='hidden' name='$k' value='".$h."'>"; }
+			/* insert table name into form */
+			echo "<input type='hidden' name='tbl_name' value='".$this->table."'>";
+			/* call submit  */
+			$this->submitbtn($this->table);
 		echo "</form>";
-		
-
 	}
 	
+	/* call the submit button */
 	function submitbtn($name=null){
 		echo '<div class="col-lg-'.$this->lg.' col-md-'.$this->md.' col-sm-'.$this->sm.' col-xs-12 pull-left ">';
 		echo "<p><input type='submit' value='SAVE' class='form-control text-light btn bg-primary'></p>";
 		echo "</div>";
 	}
 
+
+	protected function form_fields(){
+		foreach($this->fields as $id=>$f): $this->fieldset($f); endforeach;
+	}
+
+	/* make form elements hidden. These fields are  persistable to db! */
+	function hidden($name, $value){ $this->hidden[$name] =$value; $this->hide($name); }
+
+	/* load the edit form  */
 	public function edit($a,$cm=null){
 		$this->init($a);
 		$_SESSION["action"] = "update";
+		/* create edit from */
 		echo "<form action='".base_url('crud/save/'.$this->table)."' role='form' class='row' enctype='multipart/form-data' class='' method='post'>";
-		foreach($this->fields as $id=>$f):
-		$this->fieldset($f);
-		endforeach;
+		/* form fields */
+		$this->form_fields();
+		/* add table name */
 		echo "<input type='hidden' name='rowid' class='' value='".$this->data[0]["id"]."'>";
 		$this->submitbtn($this->table);
 		
@@ -212,7 +225,7 @@ class Tablo extends fieldsets{
 		$style = isset($this->combos[$d->name]) && !in_array(strtolower($d->name),$this->reserved)? "style='width:85%'" : "null";
 		
 		if(!in_array(strtolower($d->name),$this->reserved) && !in_array(strtolower($d->name),$this->reserved)){ 
-			echo "<div class='input-group col-lg-".$this->lg." col-md-".$this->md." col-sm-".$this->sm." col-xs-12 pull-left mb-3' >";
+			echo "<div class='input-group col-lg-".$this->lg." col-md-".$this->md." col-sm-".$this->sm." pull-left mb-3' >";
 		}else{
 			echo "<div>";
 		}
@@ -229,9 +242,9 @@ class Tablo extends fieldsets{
 			if(isset( $this->combos[$name])){
 				$this->combo_filter($d, $v);
 			}else{
-				$disabled = isset($this->values[$d->name])? "disabled=TRUE" : null;
+				$disabled = isset($this->values[$d->name])? "readonly=TRUE" : null;
 				if($d->type == "252" || $d->type == "textarea" || $d->type == "blob"){
-					echo "<textarea $disabled type='text' name='$d->name' class='form-control'>$v</textarea>";
+					echo "<textarea $disabled type='text' name='$d->name' class='form-control' rows=5>$v</textarea>";
 				}elseif($d->type == "7" || $d->type == "timestamp" || $d->type == "date"){
 					$v = explode(" ",$v)[0];
 					echo "<input  $disabled  class='form-control' required type='".$this->fieldtypes[$d->type]."' name='$d->name' value='$v' />";

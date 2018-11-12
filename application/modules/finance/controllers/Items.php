@@ -11,10 +11,10 @@ class Items extends CI_Controller{
     
     public function __construct(){
         parent::__construct();
-        
          
-        
         $this->load->model(['item']);
+        $this->load->library(['genlib']);
+        $this->load->model(['genmod']);
     }
     
     /**
@@ -65,7 +65,11 @@ class Items extends CI_Controller{
         $this->pagination->initialize($config);//initialize the library class
         
         //get all items from db
+        $data["critical_level"] = 10;
+        $data["reorder_level"] = 25;
         $data['allItems'] = $this->item->getAll($orderBy, $orderFormat, $start, $limit);
+        // pf($data['allItems']);
+
         $data['range'] = $totalItems > 0 ? "Showing " . ($start+1) . "-" . ($start + count($data['allItems'])) . " of " . $totalItems : "";
         $data['links'] = $this->pagination->create_links();//page links
         $data['sn'] = $start+1;
@@ -203,6 +207,20 @@ class Items extends CI_Controller{
     ********************************************************************************************************************************
     ********************************************************************************************************************************
     */
+
+    public function recheckLevels($itemId){
+
+       /* check reorder levels and report */
+       $basic = gl("select code, name, (quantity - reorder_level) as reorder from items where id = '$itemId'");
+       $critical = gl("select code, name, (quantity - critical_level) as reorder from items where id = '$itemId'");
+
+       if($basic->reorder < 0){
+            $at_stage = $critical->reorder < 0 ? "at critical" : "below re-order";
+            $mess = "product#". $critical->code."  (". $critical->name. ") is ".$at_stage." level";
+            pushGroupMessage($this->session->user_id, "skylark_stores", $mess);
+       }
+
+    }
     
     
     public function updatestock(){
@@ -243,9 +261,10 @@ class Items extends CI_Controller{
                 Reason: <p>{$desc}</p>";
             
             //function header: addevent($event, $eventRowId, $eventDesc, $eventTable, $staffId)
-            $updated ? $this->genmod->addevent($event, $itemId, $eventDesc, "items", $this->session->admin_id) : "";
+            $updated ? $this->genmod->addevent($event, $itemId, $eventDesc, "items", $this->session->user_id) : "";
             
             $this->db->trans_complete();//end transaction
+            
             
             $json['status'] = $this->db->trans_status() !== FALSE ? 1 : 0;
             $json['msg'] = $updated ? "Stock successfully updated" : "Unable to update stock at this time. Please try again later";
@@ -283,25 +302,28 @@ class Items extends CI_Controller{
         $this->form_validation->set_rules('itemCode', 'Item Code', ['required', 'trim', 
             'callback_crosscheckCode['.$this->input->post('_iId', TRUE).']'], ['required'=>'required']);
         $this->form_validation->set_rules('itemPrice', 'Item Unit Price', ['required', 'trim', 'numeric']);
+        $this->form_validation->set_rules('itemCl', 'Critical Level', ['required', 'trim', 'numeric']);
+        $this->form_validation->set_rules('itemRl', 'Re-order Level', ['required', 'trim', 'numeric']);
         $this->form_validation->set_rules('itemDesc', 'Item Description', ['trim']);
         
         if($this->form_validation->run() !== FALSE){
             $itemId = set_value('_iId');
             $itemDesc = set_value('itemDesc');
+            $itemCl = set_value('itemCl');
+            $itemRl = set_value('itemRl');
             $itemPrice = set_value('itemPrice');
             $itemName = set_value('itemName');
             $itemCode = $this->input->post('itemCode', TRUE);
             
             //update item in db
-            $updated = $this->item->edit($itemId, $itemName, $itemDesc, $itemPrice);
+            $updated = $this->item->edit($itemId, $itemName, $itemDesc, $itemPrice, $itemCl, $itemRl);
             
             $json['status'] = $updated ? 1 : 0;
             
             //add event to log
             //function header: addevent($event, $eventRowId, $eventDesc, $eventTable, $staffId)
             $desc = "Details of item with code '$itemCode' was updated";
-            
-            $this->genmod->addevent("Item Update", $itemId, $desc, 'items', $this->session->admin_id);
+            $this->genmod->addevent("Item Update", $itemId, $desc, 'items', $this->session->user_id);
         }
         
         else{

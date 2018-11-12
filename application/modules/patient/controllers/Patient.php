@@ -109,10 +109,20 @@ class Patient extends MX_Controller {
 	* @param:servicename
 	* @return:serviceview  
 	*/
-	public function svc($service=null){
+	public function svc($service=null, $id=null){
 		if(file_exists(APPPATH."modules/patient/views/".$service.".php")){
-			$data = $this->patient_model->recent();
-			serve($service,$data);
+			$serviceq = $service."q";
+			$view = is_null($id)? $service : $service."_detail";
+
+			$data = $this->patient_model->recent($service, $id);
+			if($id){
+				
+			}else{
+				$qids = $this->session->$serviceq ?? []; /* mock  */ // $qids = ["4"=>"4",20=>"20"];
+				$data["q"] = array_map(function($id){ return current($this->patient_model->profile($id)); },$qids);
+			}
+
+			serve($view,$data);
 		}else{
 			render("service_not_found");
 		}

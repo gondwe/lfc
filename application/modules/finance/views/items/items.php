@@ -179,9 +179,9 @@ defined('BASEPATH') OR exit('');
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button class="close" data-dismiss="modal">&times;</button>
-                <h4 class="text-center">Update Stock</h4>
+                <h5 >Update Stock</h5>
                 <div id="stockUpdateFMsg" class="text-center"></div>
+                <button class="fa-fa-close text-right" data-dismiss="modal"></button>
             </div>
             <div class="modal-body">
                 <form name="updateStockForm" id="updateStockForm" role="form">
@@ -248,9 +248,9 @@ defined('BASEPATH') OR exit('');
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <button class="close" data-dismiss="modal">&times;</button>
-                <h4 class="text-center">Edit Item</h4>
+                <h5 class="">Edit Item</h5>
                 <div id="editItemFMsg" class="text-center"></div>
+                <span class="fa fa-close" data-dismiss="modal"></span>
             </div>
             <div class="modal-body">
                 <form name="addNewItemForm" id="addNewItemForm" role="form">
@@ -271,6 +271,18 @@ defined('BASEPATH') OR exit('');
                             <label for="unitPrice">Unit Price</label>
                             <input type="text" id="itemPriceEdit" name="itemPrice" placeholder="Unit Price" class="form-control checkField">
                             <span class="help-block errMsg" id="itemPriceEditErr"></span>
+                        </div>
+                        
+                        <div class="col-sm-4 form-group-sm">
+                            <label for="reorder_level">Re-order Level</label>
+                            <input type="text" id="reorder_levelEdit" name="reorder_level" placeholder="Reorder Level" class="form-control checkField">
+                            <span class="help-block errMsg" id="reorder_levelEditErr"></span>
+                        </div>
+                        
+                        <div class="col-sm-4 form-group-sm">
+                            <label for="critical_level">Critical Level</label>
+                            <input type="text" id="critical_levelEdit" name="critical_level" placeholder="Critical Level" class="form-control checkField">
+                            <span class="help-block errMsg" id="critical_levelEditErr"></span>
                         </div>
                     </div>
                     

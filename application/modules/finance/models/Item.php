@@ -191,14 +191,9 @@ class Item extends CI_Model{
        $q = "UPDATE items SET quantity = quantity - $qty WHERE id = ?";
        
        $this->db->query($q, [$itemId]);
-       
-       if($this->db->affected_rows()){
-           return TRUE;
-       }
-       
-       else{
-           return FALSE;
-       }
+
+       return $this->db->affected_rows()? TRUE : FALSE; 
+    
    }
    
    /*
@@ -216,8 +211,8 @@ class Item extends CI_Model{
     * @param type $itemDesc
     * @param type $itemPrice
     */
-   public function edit($itemId, $itemName, $itemDesc, $itemPrice){
-       $data = ['name'=>$itemName, 'unitPrice'=>$itemPrice, 'description'=>$itemDesc];
+   public function edit($itemId, $itemName, $itemDesc, $itemPrice, $itemCl, $itemRl){
+       $data = ['name'=>$itemName, 'unitPrice'=>$itemPrice, 'description'=>$itemDesc, 'critical_level'=>$itemCl, 'reorder_level'=>$itemRl, ];
        
        $this->db->where('id', $itemId);
        $this->db->update('items', $data);

@@ -217,6 +217,8 @@ $(document).ready(function(){
         var itemName = $("#itemName-"+itemId).html();
         var itemPrice = $("#itemPrice-"+itemId).html().split(".")[0].replace(",", "");
         var itemCode = $("#itemCode-"+itemId).html();
+        var itemRl = $("#rc-"+itemId).data("reorder");
+        var itemCl = $("#rc-"+itemId).data("critical");
         
         //prefill form with info
         $("#itemIdEdit").val(itemId);
@@ -224,12 +226,16 @@ $(document).ready(function(){
         $("#itemCodeEdit").val(itemCode);
         $("#itemPriceEdit").val(itemPrice);
         $("#itemDescriptionEdit").val(itemDesc);
+        $("#critical_levelEdit").val(itemCl);
+        $("#reorder_levelEdit").val(itemRl);
         
         //remove all error messages that might exist
         $("#editItemFMsg").html("");
         $("#itemNameEditErr").html("");
         $("#itemCodeEditErr").html("");
         $("#itemPriceEditErr").html("");
+        $("#reorder_levelEditErr").html("");
+        $("#critical_levelEditErr").html("");
         
         //launch modal
         $("#editItemModal").modal('show');
@@ -247,11 +253,15 @@ $(document).ready(function(){
         var itemDesc = $("#itemDescriptionEdit").val();
         var itemId = $("#itemIdEdit").val();
         var itemCode = $("#itemCodeEdit").val();
+        var itemRl = $("#reorder_levelEdit").val();
+        var itemCl = $("#critical_levelEdit").val();
         
-        if(!itemName || !itemPrice || !itemId){
+        if(!itemName || !itemPrice || !itemId || !itemRl || !itemCl ){
             !itemName ? $("#itemNameEditErr").html("Item name cannot be empty") : "";
             !itemPrice ? $("#itemPriceEditErr").html("Item price cannot be empty") : "";
             !itemId ? $("#editItemFMsg").html("Unknown item") : "";
+            !itemRl ? $("#reorder_levelEditErr").html("Re order level must be a number") : "";
+            !itemCl ? $("#critical_levelEditErr").html("Crtical level must be a number") : "";
             return;
         }
         
@@ -260,7 +270,7 @@ $(document).ready(function(){
         $.ajax({
             method: "POST",
             url: appRoot+"items/edit",
-            data: {itemName:itemName, itemPrice:itemPrice, itemDesc:itemDesc, _iId:itemId, itemCode:itemCode}
+            data: {itemName:itemName, itemPrice:itemPrice, itemDesc:itemDesc, _iId:itemId, itemCode:itemCode, itemCl:itemCl, itemRl:itemRl }
         }).done(function(returnedData){
             if(returnedData.status === 1){
                 $("#editItemFMsg").css('color', 'green').html("Item successfully updated");
@@ -278,9 +288,11 @@ $(document).ready(function(){
                 $("#itemNameEditErr").html(returnedData.itemName);
                 $("#itemCodeEditErr").html(returnedData.itemCode);
                 $("#itemPriceEditErr").html(returnedData.itemPrice);
+                $("#reorder_levelEditErr").html(returnedData.itemRl);
+                $("#critical_levelEditErr").html(returnedData.itemCl);
             }
         }).fail(function(){
-            $("#editItemFMsg").css('color', 'red').html("Unable to process your request at this time. Please check your internet connection and try again");
+            $("#editItemFMsg").css('color', 'red').html("Unable to process your request at this time. Please check your server Connection & try again");
         });
     });
     
@@ -356,10 +368,24 @@ $(document).ready(function(){
             method: "POST",
             url: appRoot+"items/updatestock",
             data: {_iId:itemId, _upType:updateType, qty:stockUpdateQuantity, desc:stockUpdateDescription}
-        }).done(function(returnedData){
+        })
+        
+        .done(function(returnedData){
             if(returnedData.status === 1){
                 $("#stockUpdateFMsg").html(returnedData.msg);
-                
+            }else{
+                $("#stockUpdateFMsg").html(returnedData.msg);
+                $("#stockUpdateTypeErr").html(returnedData._upType);
+                $("#stockUpdateQuantityErr").html(returnedData.qty);
+                $("#stockUpdateDescriptionErr").html(returnedData.desc);
+            }
+        })
+        .done(function(){
+            if(updateType == "deficit"){
+                return $.post(appRoot + "items/recheckLevels/" + itemId);
+            }
+        })
+        .done(function(){
                 //refresh items' list
                 lilt();
                 
@@ -371,17 +397,9 @@ $(document).ready(function(){
                     $("#updateStockModal").modal('hide');//hide modal
                     $("#stockUpdateFMsg").html("");//remove msg
                 }, 1000);
-            }
-            
-            else{
-                $("#stockUpdateFMsg").html(returnedData.msg);
-                
-                $("#stockUpdateTypeErr").html(returnedData._upType);
-                $("#stockUpdateQuantityErr").html(returnedData.qty);
-                $("#stockUpdateDescriptionErr").html(returnedData.desc);
-            }
-        }).fail(function(){
-            $("#stockUpdateFMsg").html("Unable to process your request at this time. Please check your internet connection and try again");
+        })
+        .fail(function(){
+            $("#stockUpdateFMsg").html("Unable to process your request at this time. Please check your Server connection and try again");
         });
     });
     

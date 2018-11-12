@@ -94,17 +94,15 @@ class Genmod extends CI_Model{
      * @return boolean
      */
     public function addevent($event, $eventRowIdOrRef, $eventDesc, $eventTable, $staffId){
-        $data = ['event'=>$event, 'eventRowIdOrRef'=>$eventRowIdOrRef, 'eventDesc'=>$eventDesc, 'eventTable'=>$eventTable, 'staffInCharge'=>$staffId];
+        $data = ['event'=>$event, 'eventRowIdOrRef'=>$eventRowIdOrRef, 
+                    'eventDesc'=>$eventDesc, 'eventTable'=>$eventTable, 'staffInCharge'=>$staffId];
         
+        $datalog = ["userid"=>$staffId,"operation"=>strip_tags($eventDesc),"host"=>gethostbyaddr($_SERVER["REMOTE_ADDR"])];
+        // datalog(strip_tags($eventDesc));
+        $this->db->insert('datalog', $datalog);
         $this->db->insert('eventlog', $data);
         
-        if($this->db->affected_rows() > 0){
-            return TRUE;
-        }
-        
-        else{
-            return FALSE;
-        }
+        return $this->db->affected_rows() ? TRUE : FALSE;
     }
     
     /*

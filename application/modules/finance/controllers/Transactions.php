@@ -13,7 +13,8 @@ class Transactions extends CI_Controller{
     public function __construct(){
         parent::__construct();
         $this->load->library("genlib");
-        $this->load->helper("text");
+        $this->load->model(['genmod']);
+        $this->load->helper("string");
         // $this->genlib->checkLogin();
         $this->load->model(['transaction', 'item']);
     }

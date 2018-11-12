@@ -3,9 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 /**
  * Description of Search
- *
- * @author   ace
- * @date 26th Rab.Awwal, 1437A.H (Jan. 7th, 2016)
+ ** @author   ace
  */
 
 class Search extends CI_Controller{
@@ -15,6 +13,8 @@ class Search extends CI_Controller{
         parent::__construct();
 
         //$this->gen->checklogin();
+        $this->load->library("genlib");
+        $this->load->model("genmod");
 
         $this->genlib->ajaxOnly();
 

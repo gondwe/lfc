@@ -49,7 +49,14 @@ class Fieldsets {
 				$this->aliases["frame_upcharge"] = "frame & upcharge";
 				$this->ucase("lens_type");
 			break;
-			
+
+			case "dataconf" : 
+				if($this->valuetype == 'religion') {
+					$this->aliases("b,RELIGION");
+					$this->hide("a,c,d");
+					$this->hide("a");
+				}
+			break;
 		}
 		
 	}

@@ -3,7 +3,7 @@
 
 
 <?php 
-// pf($dates);
+if(empty($dates)) pf("<span class='ml-5'>Database Records has 0 Logs...</span>");
 foreach($dates as $date){
     $thisdate = date_format(new DateTime($date->dates), "Y-m-d");
     $d = explode(" ", str_replace(' 0:00:00 AM' , '', datef($date->dates)));

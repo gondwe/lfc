@@ -1,8 +1,17 @@
-<?=titles("Edit ".$table,null,1)?>
+<?=titles("Edit ".rxx($vt ?? $table),null,1)?>
 <hr>
 <?php
 
-    $d = new tablo($table);
+
+/* 
+    *   crud editor
+    *   @author:gondwe
+    *   url:developer@nardtec.net
+    *   2018
+ */
+
+
+    $d = new tablo($table, $vt);
 
     
     // field injection use cases
@@ -11,6 +20,7 @@
         case "patient_master" : 
         // $d->hide("dob");
         break;
+        
     }
 
 

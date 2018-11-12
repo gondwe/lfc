@@ -1,7 +1,32 @@
 
 
-<h4 class="m-3 text-dim">skylark/testsite/</h4>
+<h4 clASs="m-3 text-dim">skylark/testsite/</h4>
 <?php 
+
+
+
+/* ==================== TEST MESSAGES & CHAT ==================== */
+    
+    // pushmessage(1,6,"Admin TEst");
+    // pf(parse_url(base_url())["host"]);
+
+/* ==================== END TEST ==================== */
+
+
+
+
+// pf($_SESSION);
+
+$date = getdate(strtotime("2011-09-23"));
+pf($date);
+
+
+
+
+
+
+
+
 
 
 /*
@@ -19,7 +44,9 @@ pf($j);
 */
 // $a = $this->db->select("id")->where("username", "steve")->get("users")->row('id');
 // pf($a);
-pf($_SESSION);
+// pf($_SESSION);
+
+// $groups = "'".join("','",$this->session->groups)."'";
 
 // $a = [1,2,3];
 
@@ -43,15 +70,11 @@ pf($_SESSION);
 //     ";
 // }
 
-$a = ["skylark_doctor","skylark_optical","skylark_cashier","skylark_pharmacy","skylark_theatre","skylark_finance",];
+// $a = ["skylark_doctor","skylark_optical","skylark_cAShier","skylark_pharmacy","skylark_theatre","skylark_finance",];
 
 // echo $j = insertJoin($a, 'group_cat');
 
 // process("insert into dataconf(a,b) values $j");
-
-for($x=0;$x<10;$x++){
-    ws(1,$x,"Two");
-}
 
 
 

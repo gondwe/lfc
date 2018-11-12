@@ -24,12 +24,6 @@ class Screening extends MX_Controller {
 
 	function osod($id=null){
 		$this->session->screening = isset($this->session->screening) ? $this->session->screening : $this->session->activepatient;
-		// $this->patient_model->qstack("screeningq", "set", $this->session->activepatient);
-		
-
-		// throw me in the queue temporarily
-		// qstack("screeningq", "set", $this->session->screening);
-
 		$id = $id ?? $this->session->screening;
 		$data["id"] = $id;
 		$recent = $this->patient_model->profile($id);
@@ -43,13 +37,8 @@ class Screening extends MX_Controller {
 
 	public function tablesearch(){
 		$s = $this->input->post("x");
-		if($s == ""){ 
-			$data["search"]  = $this->recent()["recent"];
-		}else{
-			$data["search"] = $this->patient_model->namesearch($s);
-		}
+		if($s == ""){ $data["search"]  = $this->recent()["recent"]; }else{ $data["search"] = $this->patient_model->namesearch($s); }
 		$this->load->view("screening/namesearch",$data);
-		// $this->load->view("screening/namesearch",$data);
 	}
 
 
@@ -59,9 +48,7 @@ class Screening extends MX_Controller {
 		$scrn = $this->patient_model->screening($id);
 		$data ["prof"] = $recent;
 		$data ["scrn"] = $scrn;
-		//$data = gl("select p.*, age(dob) as age, dc.b as ptype from patient_master as p , dataconf as dc where dc.id = p.category and p.id = '$id'");
-		
-		
+
 		if(!empty($data["prof"])){
 			$_SESSION['screening'] = $id;
 		} else {

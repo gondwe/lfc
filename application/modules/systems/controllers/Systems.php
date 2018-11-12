@@ -60,12 +60,6 @@ class Systems extends CI_Controller {
 
 
 
-
-
-
-
-
-
     /* 
     *   redirect the the 404 overide route 
     *   redirect the the faqs route 
@@ -117,10 +111,51 @@ class Systems extends CI_Controller {
     /* 
     *   get notifications as they trickle in 
     */
-    public function notifications($id=null){
+    public function notifications($id=null, $from=null){
+
+        /* from whom ? */
+        $who = $this->db->where("id",$from)->get("users")->row("username") ?? "Skylark Bot";
         $direct = $this->session->user_id ==  $id ? TRUE : FALSE;
-        // $groupq = '';
-        $array = ["mine"=>$direct];
+        $array = ["mine"=>$direct,"from"=>rx($who.":")];
+
+        echo json_encode($array);
+    }
+
+
+    
+
+    /* 
+    *   get queing as it trickles in 
+    */
+    public function qnotes($id=null, $from=null){
+
+        /* from whom ? */
+        $who = $this->db->where("id",$from)->get("users")->row("username") ?? "Skylark";
+
+        /* is part of a group message ? ? */
+        $groups = array_column($this->ion_auth->groups($this->session->user_id)->result(),'id');
+        $groups = "'".join("','",$groups)."'";
+        
+        $sql = "SELECT dd.b AS cat 
+                    FROM dataconf AS dd 
+                    WHERE dd.a = 'group_cat' AND dd.id 
+                    IN (SELECT DISTINCT d.b 
+                        FROM dataconf AS d 
+                        WHERE d.a = 'groupstore' 
+                        AND d.c IN ($groups)
+                    )
+                ";
+        
+        $gcat = array_column(get($sql),"cat");
+
+        $group = "false";
+        foreach($gcat as $g){ if(preg_match("/$id?/i",$g,$i)){ $group = "true"; break; } }
+        
+        pf($group);
+
+        $direct = $this->session->user_id ==  $id || $group ? TRUE : FALSE;
+        
+        $array = ["mine"=>$direct,"from"=>$who];
         echo json_encode($array);
     }
 
@@ -134,8 +169,27 @@ class Systems extends CI_Controller {
     }
 
 
-    function activegal($id){
-        $this->session->add_userdata('activegal', $id);
+    /* set the active group access list tab */
+    function activegal($action,$id, $xd=null){
+
+        switch($action){
+            case "set" : $this->session->set_userdata('activegal', $id); break;
+            case "del" : $this->db->delete("dataconf", ["id"=>$id]); break;
+            case "pop" : $this->sys_model->flipstore($id, $xd); break;
+        }
+
+
+    }
+
+
+
+
+    /* save group categories  */
+    function addgroupcats(){
+        $_POST["b"] = "skylark_".$_POST["b"];
+        if($this->db->insert("dataconf", $_POST)){
+            redirect("systems/access_control");
+        }
     }
 
 }

@@ -17,7 +17,7 @@
                     <th>UNIT PRICE</th>
                     <th>TOTAL SOLD</th>
                     <th>TOTAL EARNED ON ITEM</th>
-                    <th>UPDATE QUANTITY</th>
+                    <th>UPDATE QTY</th>
                     <th>EDIT</th>
                     <th>DELETE</th>
                 </tr>
@@ -34,16 +34,17 @@
                             <?=word_limiter($get->description, 15)?>
                         </span>
                     </td>
-                    <td class="<?=$get->quantity <= 10 ? 'bg-danger' : ($get->quantity <= 25 ? 'bg-warning' : '')?>">
+                    <td class="<?=$get->quantity <= $get->critical_level ? 'bg-danger' : ($get->quantity <= $get->reorder_level ? 'bg-warning' : '')?>">
                         <span id="itemQuantity-<?=$get->id?>"><?=$get->quantity?></span>
                     </td>
-                    <td>KES <span id="itemPrice-<?=$get->id?>"><?=number_format($get->unitPrice, 2)?></span></td>
+                    <td><span id="itemPrice-<?=$get->id?>"><?=number_format($get->unitPrice, 2)?></span></td>
                     <td><?=$this->genmod->gettablecol('transactions', 'SUM(quantity)', 'itemCode', $get->code)?></td>
                     <td>
-                        KES <?=number_format($this->genmod->gettablecol('transactions', 'SUM(totalPrice)', 'itemCode', $get->code), 2)?>
+                        <?=number_format($this->genmod->gettablecol('transactions', 'SUM(totalPrice)', 'itemCode', $get->code), 2)?>
                     </td>
-                    <td><a class="pointer updateStock" id="stock-<?=$get->id?>">Update Quantity</a></td>
+                    <td class="text-center"><a class="pointer updateStock" id="stock-<?=$get->id?>"><i class="fa fa-chevron-circle-down text-success"></i></a></td>
                     <td class="text-center text-primary">
+                        <span id="rc-<?=$get->id?>" data-critical="<?=$get->critical_level?>" data-reorder="<?=$get->reorder_level?>" ></span>
                         <span class="editItem" id="edit-<?=$get->id?>"><i class="fa fa-pencil pointer"></i> </span>
                     </td>
                     <td class="text-center"><i class="fa fa-trash text-danger delItem pointer"></i></td>

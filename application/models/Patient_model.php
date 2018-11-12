@@ -5,7 +5,7 @@ class Patient_model extends CI_Model {
 
     function __construct()
     {
-        $this->load->helper("template");
+        // $this->load->helper("template");
         $_SESSION["activepatient"] = fetch("select max(id) from patient_master");
     }
 
@@ -35,13 +35,31 @@ class Patient_model extends CI_Model {
         *   @param:$limit
         *   @return:object();
     */
-    function recent($limit=null){
+    function recent($svc=null, $id=null, $limit="100"){
         $data["clinics"] = $this->clinics();
-        
-        $data["recent"] = get("select p.*, ucase(p.patient_names) as patient_names, pt.b as ptype from patient_master as p 
-        left join dataconf as pt 
-        on pt.id = p.category and pt.a = 'patient_type' 
-        order by p.date desc limit 100 ");
+        $where = is_null($id)? null : " where p.id = '$id' ";
+        switch($svc) {
+            case "chaplain" : $sql = "select p.*, dcc.b as faith, lcase(u.last_name) as chaplain, ucase(p.patient_names) as patient_names, pt.b as ptype from patient_master as p 
+                                left join dataconf as pt 
+                                on pt.id = p.category and pt.a = 'patient_type' 
+                                right join chaplain as ch on ch.pid = p.id
+                                left join users as u on u.id = ch.pastor
+                                left join dataconf as dcc on dcc.a = 'religion' and dcc.id = ch.religion
+                                $where
+                                order by ch.date desc ";
+            break;
+
+            default : $sql = "select p.*, ucase(p.patient_names) as patient_names, pt.b as ptype from patient_master as p 
+                                left join dataconf as pt 
+                                on pt.id = p.category and pt.a = 'patient_type' 
+                                $where
+                                order by p.date desc ";
+            break;
+        }
+
+        $data["recent"] = get($sql."limit ". $limit);
+
+
         return $data;
     }
 
@@ -68,12 +86,15 @@ class Patient_model extends CI_Model {
     */
     function profile($id=null){
         if(is_null($id)) return array();
-        return get("select p.*, age(p.dob) as age, pt.b as ptype, gender.b as sex 
+        return get("select p.*, ucase(p.patient_names) as patient_names, age(p.dob) as age,  pt.b as ptype, gender.b as sex 
         from patient_master as p 
         left join dataconf as pt on pt.id = p.category and pt.a = 'patient_type' 
         left join dataconf as gender on gender.id = p.sex and gender.a = 'gender'
         where p.id = '$id'");
     }
+
+
+
 
     /*  
         *   info required at screening dashboard
@@ -86,6 +107,9 @@ class Patient_model extends CI_Model {
             from screening as sc 
             where pid = '$id'");
     }
+
+
+
 
 
     /*  

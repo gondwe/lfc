@@ -348,16 +348,22 @@ function igcEmail(){
 }
 
 
-//=====================================ndk=================================================
-// =========================================================================================
-// =========================================================================================
-// =========================================================================================
-// =========================================================================================
-// =========================================================================================
+//===================================== NDK BATCH ==========================================
+//===================================== NDK BATCH ==========================================
+//===================================== NDK BATCH ==========================================
+//===================================== NDK BATCH ==========================================
+//===================================== NDK BATCH ==========================================
 
 function serve($view, $data=[]){
 	$ci = &get_instance();
-	$ci->load->view("partial/header");
+	$menus = $ci->menu_model->index();
+	$middleroutes = $ci->middleroutes->index();
+	$inbox = $ci->menu_model->inbox_data();
+	$data["meta"] = $ci->load->view("header/meta", "", TRUE);
+	$data["menulist"] = $ci->load->view("header/menus", ["menus"=>$menus], TRUE);
+	$data["lowermenus"] = $ci->load->view("header/lowermenus", ["middleroutes"=>$middleroutes], TRUE);
+	$data["notifications"] = $ci->load->view("header/notifications", $inbox, TRUE);
+	$ci->load->view("partial/header", $data);
 	$ci->load->view($view,$data);
 	$ci->load->view("partial/footer");
 }
@@ -529,19 +535,15 @@ function dbx(){	$ci = & get_instance(); return $ci->db; }
 	}
 
 
-
+	/* display title with a back  button */
 	function titles($t,$more = false, $btn=false){
 		if(isset($_SERVER["HTTP_REFERER"])){
 			$ref = $_SERVER["HTTP_REFERER"]; $here = $_SERVER["REQUEST_URI"];
-			if($btn){
-				$j = preg_match("*".$here."*",$ref,$c);
-				if($j){$label = "BACK";}else{ $label = "CANCEL";$_SESSION['back'] = $ref;}
-				$r = $_SESSION["back"];
-			}
+			if($btn){ $_SESSION['back'] = $ref; }
 		
-			echo "<h5 class='m-4 pull-left'>";
-			echo proper($t)." <span class='text-primary'>".rxx($more)."</span>";
-			if($btn) echo "<a href='".$r."' class='ml-3 mb-2 btn btn-sm btn-danger'>".$label."</a>";
+			echo "<h5 class='m-md-3 row pull-left'>";
+			echo $t." <span class='text-primary'>".rxx($more)."</span>";
+			if($btn) echo "<a href='".$ref."' class='ml-3 mb-2 btn btn-sm btn-danger'>".$btn."</a>";
 			echo "</h5>";
 		}else{
 			echo "<h5 class='m-4 pull-left'>$t</h5>";
@@ -550,21 +552,25 @@ function dbx(){	$ci = & get_instance(); return $ci->db; }
 	}
 	
 
-		
+/* alias for php strtupper */		
 function ucase($i){ return strtoupper($i); }
+
+/* five zero padded patient no */
 function pno($i){ return "<span class='text-danger'>".str_pad($i,5,"0", STR_PAD_LEFT)."</span>"; }
 
+/* link to patient profile using pno */
 function pflink($id){
 	$names = fetch("select patient_names from patient_master where id = '$id'");
 	return "<a style='color:#009688' href='".base_url('patient/profile/'.$id)."'>".rxx($names,2)." | pNo.".pno($id)."</a>";
 }
 
+
 function newbtn($a,$b=null,$c="ADD"){
 	return '<a href="'.base_url($a).'" class="btn btn-sm btn-primary m-4" >'.$c.' '.rxx($b,2).' <i class="fa fa-plus"></i></a>';
 }
 
-function topic($i){ return "<h5 class='m-3' style='color:#28a745 !important'> ".rxx($i)."</h5>"; }
-function datef($d){ return date_format(new DateTime($d),"D jS M, Y G:i:s A"); }
+function topic($i){ $colors = ["success","primary","info","teal","secondary","danger"]; $color= $colors[array_rand($colors)]; return "<h5 class='text-$color m-3' style=''> ".rxx($i)."</h5>"; }
+function datef($d, $time=null){ $dtI = getdate(strtotime($d)); $yr = date("Y") == $dtI["year"] ? "" : $dtI["year"]; $hrs = is_null($time) ? " G:i:s" : "";  return date_format(new DateTime($d),"D jS M $yr $hrs"); }
 function success($msg){ $_SESSION["infoh"] = strip_tags($msg); }
 function warning($msg){ $_SESSION["errorh"] = strip_tags($msg); }
 function notice($msg,$p=0){ if($p) { $_SESSION["wnotice"] = strip_tags($msg); }else{ $_SESSION["notice"] = strip_tags($msg); }}
@@ -648,10 +654,19 @@ function qstack($section, $action, $id){
 
 
 
-
 function pushmessage($from, $to, $message){
+	$message = addslashes($message);
 	ws($from, $to, $message);
-	process("insert into chat(`from`, `to`, `message`)values('$from','$to','$message')");
+	process("insert into chat(`from_`, `to_`, `message`)values('$from','$to','$message')");
+}
+
+
+
+
+function pushGroupMessage($from, $to, $message){
+	// $message = addslashes($message);
+	ws($from, $to, $message);
+	process("insert into chat(`from_`, `to_`, `message`)values('$from','$to','$message')");
 }
 
 
@@ -662,18 +677,18 @@ function pushmessage($from, $to, $message){
 
 /* display notification */
 function ws($from,$to,$msg){
-    echo 
-    "<script>
+    ?>
+    <script>
         $(document).ready(function(){
-
             var block = new Object()
-            block.from = '".$from."';
-            block.to = '".$to."';
-            block.msg = '".$msg."';
-
+				block.from = "<?=$from?>";
+				block.to = "<?=$to?>";
+				block.msg = "<?=$msg?>";
+			pf(block);
             send(JSON.stringify(block));
         })
-    </script>";
+    </script>
+	<?php
 }
 
 

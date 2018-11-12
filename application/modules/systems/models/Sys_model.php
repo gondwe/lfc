@@ -8,17 +8,18 @@ class Sys_Model extends CI_Model {
         parent::__construct();
     }
 
-
+    /* retrieve distinct years of accumulated logs */
     public function cum_years(){
         return get("select distinct year(date) as id, year(date) as year from datalog");
     }
 
+    /* a list of the dates so far */
     public function logged_dates(){
         $d = get('select distinct date(date) as dates from datalog order by date desc');
         return $d;
     }
     
-
+    /* get the logged events  */
     public function active_logs(){
         return $this->db
                     ->select('d.*, u.username as user')
@@ -29,7 +30,7 @@ class Sys_Model extends CI_Model {
                     ->result();
     }
 
-
+    /* clear the logged events and make backup */
     public function clearlogs(){
         $year = $_POST["year"];
         $month = $_POST["month"];
@@ -54,20 +55,30 @@ class Sys_Model extends CI_Model {
         } else {
             notify("No Data Available",2);
         }
-
-
-
-
-
     }
 
 
-
+    /* dump text of any string */
     protected function dumptext($string){
-        pf($string);
         $filename = ('assets/logs/'.date("d-m-Y").strtotime("now").'.sky');
         $j = fopen($filename,"wb");
         fwrite($j,$string);
         fclose($j);
     }
+
+
+    /* save or delete depending on mouse click */
+    public function flipstore($xd, $id){
+        $where = ["b"=>$xd, "c"=>$id, "a"=>"groupstore"];
+        
+        $exists  = $this->db->select(" count(id) as a ")->where($where)->get("dataconf")->row('a');
+    
+        if($exists){ 
+            $this->db->delete("dataconf", $where);
+        }else{
+            $this->db->insert("dataconf", $where);
+        }
+
+    }
+
 }

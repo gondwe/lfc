@@ -1,18 +1,27 @@
 <?php
+
+
+/* 
+    *   crud master
+    *   @author:gondwe
+    *   url:developer@nardtec.net
+    *   2015
+ */
+
 class Crud extends MX_Controller {
-
-
     function __construct()
     {
         // $this->load->helper("fieldsets");
         // $this->load->library("tablo");
+        $this->load->model("stack_exchange");
     }
 
-    public function edit($table=null,$id=null){
+    public function edit($table=null,$id=null, $valuetype=null){
         if(is_null($table) || is_null($id)) redirect("/", "refresh");
         
         $data["id"] = $id;
         $data["table"] = $table;
+        $data["vt"] = $valuetype;
         serve("crud/edit",$data);
     }
 
@@ -23,18 +32,12 @@ class Crud extends MX_Controller {
         $ref = str_replace(".","/",$ref);
         
         if($id = $this->insertrecord($table)){
-            datalog("New Record created on $t");
+            datalog("New Record Created - $t");
             success("Data Entry Successful");
         }
 
         // misc functions 
-        switch ($t) {
-            case "patient_master" : 
-            $this->load->model("patient_model");
-            qstack("screeningq", "set", $id);
-            break;
-        }
-
+        $this->stack_exchage->shuffle();
         redirect($ref);
         
     }

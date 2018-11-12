@@ -1036,6 +1036,7 @@ class Ion_auth_model extends CI_Model
 
 		if (empty($identity) || empty($password))
 		{
+			datalog("Login attempt for user $identity", 1);
 			$this->set_error('login_unsuccessful');
 			return FALSE;
 		}
@@ -1053,6 +1054,14 @@ class Ion_auth_model extends CI_Model
 			// Hash something anyway, just to take up time
 			$this->hash_password($password);
 
+			// datalog("Login attempts exceeded for user $identity Temporarily locked");
+			$logdat = array(
+				"userid"=>$this->db->select("id")->where($this->identity_column, $identity)->get("users")->row('id'),
+				"host"=> gethostbyaddr($_SERVER["REMOTE_ADDR"]),
+				"operation"=>"Login attempts exceeded for user $identity Temporarily locked",
+			);
+			$this->db->insert("datalog",$logdat);
+			
 			$this->trigger_events('post_login_unsuccessful');
 			$this->set_error('login_timeout');
 
@@ -1069,6 +1078,15 @@ class Ion_auth_model extends CI_Model
 			{
 				if ($user->active == 0)
 				{
+					
+					$logdat = array(
+						"userid"=>$this->db->select("id")->where($this->identity_column, $identity)->get("users")->row('id'),
+						"host"=> gethostbyaddr($_SERVER["REMOTE_ADDR"]),
+						"operation"=>"Inactive Account Login attempt for user ".$identity,
+					);
+					echo 'sdsd';
+					$this->db->insert("datalog",$logdat);
+					
 					$this->trigger_events('post_login_unsuccessful');
 					$this->set_error('login_unsuccessful_not_active');
 
@@ -1076,7 +1094,7 @@ class Ion_auth_model extends CI_Model
 				}
 
 				$this->set_session($user);
-				$_SESSION["hms"] = "peaknett";
+				
 
 				$this->update_last_login($user->id);
 
@@ -2026,6 +2044,7 @@ class Ion_auth_model extends CI_Model
 		    'identity'             => $user->{$this->identity_column},
 		    $this->identity_column => $user->{$this->identity_column},
 		    'email'                => $user->email,
+		    'username'             => $user->email,
 		    'user_id'              => $user->id, //everyone likes to overwrite id so we'll use user_id
 		    'old_last_login'       => $user->last_login,
 		    'last_check'           => time(),
@@ -2641,4 +2660,5 @@ class Ion_auth_model extends CI_Model
 			$this->session->sess_regenerate(FALSE);
 		}
 	}
+
 }

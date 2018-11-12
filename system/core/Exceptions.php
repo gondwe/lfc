@@ -179,7 +179,10 @@ class CI_Exceptions {
 			ob_end_flush();
 		}
 		ob_start();
-		include($templates_path.$template.'.php');
+		$edb = $this->db->error ?? null;
+		@notify("Application ALERT : X2934IO ".$edb,1);
+		// include($templates_path.$template.'.php');
+		include(VIEWPATH.'lost.php');
 		$buffer = ob_get_contents();
 		ob_end_clean();
 		return $buffer;

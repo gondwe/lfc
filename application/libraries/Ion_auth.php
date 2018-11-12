@@ -138,7 +138,7 @@ class Ion_auth
 	{
 		if ($this->ion_auth_model->forgotten_password($identity))
 		{
-			// Get user information
+			// Get user informationset_error
 			$identifier = $this->ion_auth_model->identity_column; // use model identity column, so it can be overridden in a controller
 			$user = $this->where($identifier, $identity)->where('active', 1)->users()->row();
 
@@ -206,7 +206,8 @@ class Ion_auth
 		if (!$profile)
 		{
 			$this->ion_auth_model->trigger_events(array('post_password_change', 'password_change_unsuccessful'));
-			$this->set_error('password_change_unsuccessful');
+			// $this->set_error('password_change_unsuccessful');
+			error('Password Change Unsuccessful');
 			return FALSE;
 		}
 
@@ -220,7 +221,8 @@ class Ion_auth
 			);
 			if(!$this->config->item('use_ci_email', 'ion_auth'))
 			{
-				$this->set_message('password_change_successful');
+				// $this->set_message('password_change_successful');
+				success('Password Change Successful');
 				$this->ion_auth_model->trigger_events(array('post_password_change', 'password_change_successful'));
 				return $data;
 			}
@@ -236,13 +238,15 @@ class Ion_auth
 
 				if ($this->email->send())
 				{
-					$this->set_message('password_change_successful');
+					// $this->set_message('password_change_successful');
+					success('Password Change Successful');
 					$this->ion_auth_model->trigger_events(array('post_password_change', 'password_change_successful'));
 					return TRUE;
 				}
 				else
 				{
-					$this->set_error('password_change_unsuccessful');
+					// $this->set_error('password_change_unsuccessful');
+					error('Password Change Unsuccessful');
 					$this->ion_auth_model->trigger_events(array('post_password_change', 'password_change_unsuccessful'));
 					return FALSE;
 				}
@@ -315,13 +319,15 @@ class Ion_auth
 		{
 			if ($id !== FALSE)
 			{
-				$this->set_message('account_creation_successful');
+				// $this->set_message('account_creation_successful');
+				success('Account Creation Successful');
 				$this->ion_auth_model->trigger_events(array('post_account_creation', 'post_account_creation_successful'));
 				return $id;
 			}
 			else
 			{
-				$this->set_error('account_creation_unsuccessful');
+				// $this->set_error('account_creation_unsuccessful');
+				error('Account Creation Unsuccessful');
 				$this->ion_auth_model->trigger_events(array('post_account_creation', 'post_account_creation_unsuccessful'));
 				return FALSE;
 			}
@@ -330,7 +336,8 @@ class Ion_auth
 		{
 			if (!$id)
 			{
-				$this->set_error('account_creation_unsuccessful');
+				// $this->set_error('account_creation_unsuccessful');
+				error('Account Creation Unsuccessful');
 				return FALSE;
 			}
 
@@ -343,7 +350,8 @@ class Ion_auth
 
 			if (!$deactivate)
 			{
-				$this->set_error('deactivate_unsuccessful');
+				// $this->set_error('deactivate_unsuccessful');
+				error('Deactivate Unsuccessful');
 				$this->ion_auth_model->trigger_events(array('post_account_creation', 'post_account_creation_unsuccessful'));
 				return FALSE;
 			}
@@ -361,7 +369,8 @@ class Ion_auth
 			if(!$this->config->item('use_ci_email', 'ion_auth'))
 			{
 				$this->ion_auth_model->trigger_events(array('post_account_creation', 'post_account_creation_successful', 'activation_email_successful'));
-				$this->set_message('activation_email_successful');
+				// $this->set_message('activation_email_successful');
+				success('Email Activation Successful');
 				return $data;
 			}
 			else
@@ -377,14 +386,16 @@ class Ion_auth
 				if ($this->email->send() === TRUE)
 				{
 					$this->ion_auth_model->trigger_events(array('post_account_creation', 'post_account_creation_successful', 'activation_email_successful'));
-					$this->set_message('activation_email_successful');
+					// $this->set_message('activation_email_successful');
+					success('Email Activation Successful');
 					return $id;
 				}
 
 			}
 
 			$this->ion_auth_model->trigger_events(array('post_account_creation', 'post_account_creation_unsuccessful', 'activation_email_unsuccessful'));
-			$this->set_error('activation_email_unsuccessful');
+			// $this->set_error('activation_email_unsuccessful');
+			error('Email Actication Unsuccessful');
 			return FALSE;
 		}
 	}
@@ -546,6 +557,11 @@ class Ion_auth
 		 * if all, true
 		 */
 		return $check_all;
+	}
+
+
+	public function group_members($id=null){
+		return $this->get_users_groups($id)->result();
 	}
 
 }

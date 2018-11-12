@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style=''>
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>LFC MIS</title>
+	<title><?=$sysname.$ver?></title>
 	
 	
 	<link rel="stylesheet" href="<?=site_url("/assets/css/bootstrap.min.css") ?>" >
@@ -14,14 +14,15 @@
 	
 	
 </head>
-<div class="container" style="margin-top:5%">
-    <h1 class="text-center ">
-    <span class="text-center h1">
-    <i class=" fa fa-medkit text-danger"></i> 
-    </span>
-    <?=sprintf("Lighthouse HMIS")?>
+<body style='background:white'>
+    
+<!-- </body> -->
+<div class="container" style='background:#17a2b8;'>
+    <h1 class="text-center" style="margin-top:2%;margin-left:-60px;">
+    <img src="<?=base_url('assets/images/sky.png')?>" alt="bird" style=' max-width:300px' class='col-md-4 col-lg-3 p-3'>
+    <!-- <sub style='color:#ddd' class=''>&reg</sub> -->
     </h1>
-	<div class="row justify-content-center">
+	<div class="row justify-content-center" style='background:#0ccae86b'>
 		<div class="col-xs-12 col-md-8 col-sm-10 col-lg-5 pb-5">
 
 
@@ -29,10 +30,11 @@
 
                     <form action="" method="post">
                         <div class="">
-                            <div class="card-header p-0">
+                            <div class=" pb-3">
                                 <!-- <div class="bg-info text-white text-center py-2"> -->
                                     <!-- <h3> Sign In</h3> -->
                                 <!-- </div> -->
+									
                             </div>
                                     <div id='alerts' class="m-0"><?=$message?></div>
                             <div class="card-body p-3">
@@ -46,7 +48,7 @@
             <div class="input-group-prepend">
                 <div class="input-group-text"><i class="fa fa-user text-info"></i></div>
             </div>
-              <?php echo form_input($identity,null,["class"=>"form-control"]);?>
+              <?php echo form_input($identity,null,["class"=>"form-control", "placeholder"=>" Username"]);?>
             </div>
         </div>
   <!-- </p> -->
@@ -55,14 +57,14 @@
     <div class="form-group">
         <div class="input-group mb-2">
             <div class="input-group-prepend">
-                <div class="input-group-text"><i class="fa fa-lock text-info"></i></div>
+                <div class="input-group-text"><i class="fa fa-lock text-primary"></i></div>
             </div>
-              <?php echo form_input($password,null,["class"=>"form-control"]);?>
+              <?php echo form_input($password,null,["class"=>"form-control", "placeholder"=>" Password"]);?>
             </div>
         </div>
   <!-- </p> -->
 
-  <?php echo form_submit('submit', lang('login_submit_btn'), ["class"=>"mb-3 pull-right btn btn-primary btn-block"]);?>
+  <?php echo form_submit('submit', lang('login_submit_btn'), ["class"=>"mb-3 pull-right btn btn-info btn-block"]);?>
 
   <div class="pull-left">
     
@@ -71,7 +73,7 @@
     
   </div>
 
-  <div class="pull-right"><a href="forgot_password" class=""><?php echo lang('login_forgot_password');?></a></div>
+  <div class="pull-right text-light"><a href="forgot_password" class="text-light"><?php echo lang('login_forgot_password');?></a></div>
 
   
 <?php echo form_close();?>
@@ -93,10 +95,9 @@
             padding-left:40px
       }
     .container{
-        border: 1px solid #ddd;
+        /* border: 1px solid #ddd; */
         box-shadow: 0px 0px 300px 60px #ddd;
-        padding-top:50px
-        /* box-shadow: 0px 2px 6px 0px darkgreen; */
+        /* padding-top:50px */
     }
     .justify-content-center {
         border-top: 1px solid #ddd;

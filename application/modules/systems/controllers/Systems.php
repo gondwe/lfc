@@ -133,4 +133,9 @@ class Systems extends CI_Controller {
         serve('groupcat', $data);
     }
 
+
+    function activegal($id){
+        $this->session->add_userdata('activegal', $id);
+    }
+
 }

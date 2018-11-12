@@ -16,12 +16,33 @@ class Crud extends MX_Controller {
         serve("crud/edit",$data);
     }
 
-    public function insert($t){
+    public function insert($t,$ref=null){
         $table = array_pop($_POST);
-        $ref = $_SERVER["HTTP_REFERER"];
-        insert($table);
+
+        $ref = $ref ?? $_SERVER["HTTP_REFERER"];
+        $ref = str_replace(".","/",$ref);
+        
+        if($id = $this->insertrecord($table)){
+            datalog("New Record created on $t");
+            success("Data Entry Successful");
+        }
+
+        // misc functions 
+        switch ($t) {
+            case "patient_master" : 
+            $this->load->model("patient_model");
+            qstack("screeningq", "set", $id);
+            break;
+        }
+
         redirect($ref);
         
+    }
+
+
+    function insertrecord($table){
+        if($this->db->insert($table, $_POST))
+        return $this->db->insert_id();
     }
 
     function new($table){
@@ -41,7 +62,7 @@ class Crud extends MX_Controller {
             $fields = implode(", ",$fields);
             $sql = "update $table set $fields where id = '$id'";
             savefiles($table, $id);
-            if(process($sql)){ datalog("save"); success("Save Successful"); }
+            if(process($sql)){ datalog("Update of Record $id on $t"); success("Save Successful"); }
             redirect($ref);
         }
     }
@@ -63,7 +84,7 @@ class Crud extends MX_Controller {
 
     function delete($table,$id){
         $sql = "delete from `$table` where id = '$id'";
-        if(process($sql)) datalog("del");
+        if(process($sql)) datalog("Deletion of Record $id on $t");;
     }
 
 

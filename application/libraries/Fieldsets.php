@@ -3,7 +3,7 @@
 
 class Fieldsets {
 
-	private $db;
+	private $thisb;
 	public $orient;
 	
 	function __construct(){
@@ -31,17 +31,24 @@ class Fieldsets {
 			break;
 			
 			case "patient_master":
-			$this->combos("sex","select id, b from dataconf where a = 'gender'");
-			// $this->combos("sex",[1=>"MALE",2=>"FEMALE"]);
-			
-			$this->aliases["patient_names"] = "names";
-			// $this->ucase("patient_names");
-			$this->aliases["nationalid"] = "id no";
-			$this->aliases["category"] = "section";
-			$this->aliases["postaladdress"] = "Address";
-			$this->combos("category","select id, b from dataconf where a = 'patient_type'");
+				$this->combos("sex","select id, b from dataconf where a = 'gender'");
+				$this->aliases["patient_names"] = "names";
+				$this->aliases["nationalid"] = "id no";
+				$this->aliases["category"] = "section";
+				$this->ucase("patient_names");
+				$this->ucase("postaladdress");
+				$this->aliases["postaladdress"] = "Address";
+				$this->combos("category","select id, b from dataconf where a = 'patient_type'");
 			break;
 
+
+			case "optical_orders":
+				$this->combos("lens_type", "select id, rxx(b) as b from  dataconf where a = 'lens_type'");
+				$this->combos("frame_upcharge", "select id, b from  dataconf where a = 'upcharge'");
+				$this->combos("addons", "select id, b from  dataconf where a = 'optical_cat'");
+				$this->aliases["frame_upcharge"] = "frame & upcharge";
+				$this->ucase("lens_type");
+			break;
 			
 		}
 		

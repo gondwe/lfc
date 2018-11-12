@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "application\\modules\\finance"
+		},
+		{
+			"path": "public"
+		}
+	],
+	"settings": {}
+}

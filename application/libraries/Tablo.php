@@ -1,7 +1,7 @@
 <?php 
 
 /* 
-auth:gondwe 
+auth:ace.2015
 */
 
 // $this->load->helper("fieldsets");
@@ -14,6 +14,7 @@ class Tablo extends fieldsets{
 	protected $rowcount;
 	protected $combos;
 	protected $view_hidden;
+	protected $cases;
 
 	private $db;
 	
@@ -26,6 +27,9 @@ class Tablo extends fieldsets{
 	public $edit = true;
 	public $delete = true;
 	public $buttons = [];
+	public $lg = "4";
+	public $md = "6";
+	public $sm = "12";
 	
 	
 	private $fieldtypes;
@@ -50,38 +54,21 @@ class Tablo extends fieldsets{
 		
 	}
 	
-	
-	function query($id=null){
-		if(is_null($id)){
-			$this->data = $this->get($this->sql);
-		}else{
-			$this->data = $this->get($this->sql." where id = '$id'");
-		}
-
-	}
+	function query($id=null){ if(is_null($id)){ $this->data = $this->get($this->sql);  }else{ $this->data = $this->get($this->sql." where id = '$id'"); } }
+	function formgrid($lg="4",$md="6",$sm="12"){ $this->lg = $lg; $this->md = $md; $this->sm = $sm; }
 	
 	/* auto fill form combo boxes  */
-	public function combos($a,$b){
-		$data = is_array($b)? $b : $this->arrlist($b);
-		$this->combos[strtolower($a)] = $data;
-	}
-	
-	public function button($i,$j){
-		$this->buttons[$i] = $j;
-	}
-
-	
-	function aliases($alias){
-		$al = explode(",",$alias);
-		$this->aliases[current($al)] = end($al);
-	}
-
+	public function combos($a,$b){ $data = is_array($b)? $b : $this->arrlist($b); $this->combos[strtolower($a)] = $data; }
+	public function button($i,$j){ $this->buttons[$i] = $j; }
+	public function ucase($fld){ $this->cases["$fld"] = "ucase"; }
+	function aliases($alias){ $al = explode(",",$alias); $this->aliases[current($al)] = end($al); }
+	public function values($field,$value){ $this->values[$field] = $value; }
+	/* hide some fields only in table view */
+	function view_hidden($i){ $this->view_hidden = explode(",",$i); }
 	
 	/* display a table */
 	public function table($display_links = 1){
 		$this->init();
-		// spill($this->sql);
-		// $cm = "/".$this->uri->segment(1)."/".$this->uri->segment(2);
 		$cm = null;
 			
 		if( is_string( $this->sqlstring)){
@@ -101,16 +88,6 @@ class Tablo extends fieldsets{
 		</div>';	
 		}
 
-		// echo '
-        
-  	  	// <div class="panel panel-default card-view">
-		// 	<div class="panel-wrapper collapse in	">
-		// 	<div class="panel-body">
-		// 		<div class="table-wrap">
-        //         	<div class="box-body table-responsive" id="pdf">';
-		
-		
-		// echo '<link rel="stylesheet" href="assets/DataTables/datatables.min.css">';
 		echo '<link rel="stylesheet" href="'.base_url('assets/css/jquery-ui.css').'">';
 		echo '<link rel="stylesheet" href="'.base_url('assets/css/dataTables.jqueryui.min.css').'">';
 		echo'<table id="example" class="display striped" style="width:100%;">';
@@ -135,16 +112,20 @@ class Tablo extends fieldsets{
 				foreach($dd as $db=>$da){
 					if(!in_array($db, $this->reserved)){ 
 						if(isset($this->combos[$db])){
-							/* populate cbo data */
-							echo "<td>".@$this->combos[$db][$da]."</td>";
+							$mycase = isset($this->cases[$db]) ? $this->cases[$db] :false;
+							$combod = $this->combos[$db][$da] ?? null;
+							$cased = $mycase ? $mycase($combod) : $combod;
+							echo "<td>".@$cased."</td>";
 						}else{
-							if(strtolower($db) !== "scode") { echo "<td>$da</td>"; }
+							if(strtolower($db) !== "scode") { 
+								$mycase = isset($this->cases[$db]) ? $this->cases[$db] :false;
+								$cased = $mycase ? $mycase($da) : $da;
+								echo "<td>$cased</td>"; }
 						}
 							
 					}
 				}
 			if(!empty($this->buttons)){
-				// spill($this->buttons);
 				foreach($this->buttons as $b=>$t){
 					echo "<td><a class='btn  btn-primary btn-outline btn-rounded btn-xs' href='".base_url($t."/".$dd['id'])."' >$b</a></td>";
 				}
@@ -202,23 +183,13 @@ class Tablo extends fieldsets{
 	}
 	
 	function submitbtn($name=null){
-		echo '<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12 pull-left mt-4 form-group">';
-		echo "<p><input type='submit' value='SAVE' class='form-control btn btn-success'></p>";
+		echo '<div class="col-lg-'.$this->lg.' col-md-'.$this->md.' col-sm-'.$this->sm.' col-xs-12 pull-left ">';
+		echo "<p><input type='submit' value='SAVE' class='form-control text-light btn bg-primary'></p>";
 		echo "</div>";
 	}
 
 	public function edit($a,$cm=null){
 		$this->init($a);
-		
-		// spill($a);
-		// spill($cm);
-		// $pos = array_search($cm, $this->uri->segments)+1;
-		// $last = isset($this->uri->segments[$pos])? "/".$this->uri->segments[$pos] : null;
-		// $cm = "/".$cm.$last;
-		// spill($cm);
-		// $cm = null;
-
-
 		$_SESSION["action"] = "update";
 		echo "<form action='".base_url('crud/save/'.$this->table)."' role='form' class='row' enctype='multipart/form-data' class='' method='post'>";
 		foreach($this->fields as $id=>$f):
@@ -232,7 +203,8 @@ class Tablo extends fieldsets{
 		
 	}
 	
-	
+
+
 	function fieldset($d){
 		$value_set = isset($this->values[$d->name])? $this->values[$d->name] : null;
 		$value = $_SESSION["action"] == "update" ? $this->data[0][$d->name] : $value_set;
@@ -240,16 +212,12 @@ class Tablo extends fieldsets{
 		$style = isset($this->combos[$d->name]) && !in_array(strtolower($d->name),$this->reserved)? "style='width:85%'" : "null";
 		
 		if(!in_array(strtolower($d->name),$this->reserved) && !in_array(strtolower($d->name),$this->reserved)){ 
-			// spill($style);
-			echo "<div class='form-group col-lg-3 col-md-4 col-sm-6 col-xs-12 pull-left' >";
+			echo "<div class='input-group col-lg-".$this->lg." col-md-".$this->md." col-sm-".$this->sm." col-xs-12 pull-left mb-3' >";
 		}else{
-			// spill($this->reserved);
 			echo "<div>";
 		}
 			$this->label($d->name);
 			$this->reserve_filter($d,$value);
-			// 
-			// echo 'yee'.$d->name;
 			echo "</div>";
 	}
 	
@@ -258,23 +226,19 @@ class Tablo extends fieldsets{
 		global $user;
 		$name = strtolower($d->name);
 		if(!in_array($name,$this->reserved)){
-			// pf($d->type);
 			if(isset( $this->combos[$name])){
 				$this->combo_filter($d, $v);
 			}else{
-				
+				$disabled = isset($this->values[$d->name])? "disabled=TRUE" : null;
 				if($d->type == "252" || $d->type == "textarea" || $d->type == "blob"){
-					echo "<textarea type='text' name='$d->name' class='form-control'>$v</textarea>";
+					echo "<textarea $disabled type='text' name='$d->name' class='form-control'>$v</textarea>";
 				}elseif($d->type == "7" || $d->type == "timestamp" || $d->type == "date"){
-					// var_dump($v);
 					$v = explode(" ",$v)[0];
-					echo "<input class='form-control' required type='".$this->fieldtypes[$d->type]."' name='$d->name' value='$v' />";
+					echo "<input  $disabled  class='form-control' required type='".$this->fieldtypes[$d->type]."' name='$d->name' value='$v' />";
 				}else{
 						
 					if($d->name == "scode" || $d->name == "sid" ) {
-						// $this->reserved[] = "scode";
-						// spill($this->reserved);
-						echo "<input type='hidden' name='$d->name' value='".$user->scode."' />";
+						echo "<input  $disabled type='hidden' name='$d->name' value='".$user->scode."' />";
 					}elseif(in_array($d->name, $this->pictures)){
 						
 						if($_SESSION["action"] == "update"){
@@ -283,10 +247,9 @@ class Tablo extends fieldsets{
 							echo "<img src='".base_url($img)."' width='100px'>";
 							
 						} 
-						echo "<input class='form-control' type='file' name='$d->name' value='$v' />";
+						echo "<input  $disabled class='form-control' type='file' name='$d->name' value='$v' />";
 					}else{
-						// pf($d->type);
-						echo "<input class='form-control' required type='".$this->fieldtypes[$d->type]."' name='$d->name' value='$v' />";
+						echo "<input  $disabled class='form-control' required type='".$this->fieldtypes[$d->type]."' name='$d->name' value='$v' />";
 					}
 				}
 			}
@@ -295,16 +258,13 @@ class Tablo extends fieldsets{
 		
 	}
 	
-	/* hide some fields only in table view */
-	function view_hidden($i){
-		$this->view_hidden = explode(",",$i);
-	}
 	
 	
 	/* fill in selectbox bound fields */
 	function combo_filter($d,$v){
 		if(isset($this->combos[$d->name]) && !in_array(strtolower($d->name),$this->reserved)){
-			echo "<select name='$d->name' class='form-control' >";
+			$disabled = isset($this->values[$d->name])? "disabled=TRUE" : null;
+			echo "<select  $disabled name='$d->name' class='form-control' >";
 				foreach($this->combos[$d->name] as $i=>$j){
 					$selected = $i == $v ? "selected" : null;
 					echo "<option value='$i' $selected >".strtoupper($j)."</option>";
@@ -318,7 +278,11 @@ class Tablo extends fieldsets{
 		if(!in_array($n,$this->reserved)){
 			if( $n !== "scode" && $n !== "sid" ){
 				$label = isset($this->aliases[$n]) ? $this->aliases[$n] : $n;
-				echo "<div>".strtoupper(rxx($label))."</div>";
+				echo "
+				<div class='input-group-prepend'>
+					<div class='input-group-text'>".strtoupper(rxx($label))."</div>
+				</div>
+				";
 			} 
 		}
 	}
@@ -339,8 +303,6 @@ class Tablo extends fieldsets{
 		$db = dbx();
 		$a = $db->query($i) or spill($db->error());
 		$j = $a->result_array(); 
-		// while($r = $j->fetch_assoc()){ $l[] = $r;}
-		// pf($a->field_data());
 		$this->fields = $a->field_data();
 		$this->fieldnames = $a->list_fields();
 		return $j;
@@ -350,24 +312,8 @@ class Tablo extends fieldsets{
 	
 	function arrlist($si){ 
 		$l = [];
-
 		$i = dbx()->query($si)->result_array();
-		// pf($si);
-		// if($i !== false ) { //$i = $i->fetch_array();
-			// 	while($ai = $i->fetch_array()){
-				// 		$bi[] = $ai;
-				// 	}
-				// $i = $si;
-				// pf($i);
-			// pf($i);
-		foreach($i as $j=>$k){
-			$l[current($k)] = end($k);
-		}
-		// pf($l);
-		// }
-		// else{
-		// 	spill($this->db->error()["message"]);
-		// }
+		foreach($i as $j=>$k){ $l[current($k)] = end($k); }
 		return $l;
 	}
 	
@@ -388,13 +334,8 @@ class Tablo extends fieldsets{
 // unrelated tables
 
 function tablefoot3(){
-
 	$arg = func_get_args()[0];
-	// pf($arg);
-
-    echo "
-        
-   
+	echo "
         <script src='".base_url('assets/js/jquery-3.3.1.min.js')."'></script>
 		<script>
 		$(document).ready(function() {
@@ -413,7 +354,7 @@ function tablefoot3(){
 
     }
 
-    function hr(){
-        echo "<p style='width:110%; border-top:1px solid #aaa; opacity:0.4; height:1px; background:#ccc; margin-left:-100px; margin-bottom:10px'></p>";
-    }
+function hr(){
+	echo "<p style='width:110%; border-top:1px solid #aaa; opacity:0.4; height:1px; background:#ccc; margin-left:-100px; margin-bottom:10px'></p>";
+}
 

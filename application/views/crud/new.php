@@ -1,7 +1,18 @@
 
 
 <?=titles("Add ".$table,null,1)?>
+<?php 
 
+
+switch ($table){
+    case "patient_master" : 
+        echo '<a href="#" class="pull-right m-3"><span class="btn btn-info alert-primary"> Auto Gen :</span><span class="h2"> 44353456</span></a>';
+        
+    break;
+}
+
+
+?>
 <hr>
 
 
@@ -13,7 +24,7 @@ $d = new tablo($table);
 
 switch ($table){
     case "patient_master" : 
-    // $d->hide("dob");
+        $d->formgrid(4,6,12);
     break;
 }
 
@@ -22,3 +33,4 @@ switch ($table){
 $d->newform();
 
 ?>
+

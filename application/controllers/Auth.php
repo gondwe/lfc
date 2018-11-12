@@ -48,7 +48,7 @@ class Auth extends CI_Controller
 			}
 
 			// $this->_render_page('auth' . DIRECTORY_SEPARATOR . 'index', $this->data);
-			
+			// datalog("logged in");
 			render("auth/index",$this->data);
 		}
 	}
@@ -59,6 +59,8 @@ class Auth extends CI_Controller
 	public function login()
 	{
 		$this->data['title'] = $this->lang->line('login_heading');
+		$this->data['sysname'] = fetch('select name from settings');
+		$this->data['ver'] = fetch('select version from settings');
 
 		// validate form input
 		$this->form_validation->set_rules('identity', str_replace(':', '', $this->lang->line('login_identity_label')), 'required');
@@ -74,6 +76,7 @@ class Auth extends CI_Controller
 			{
 				//if the login is successful
 				//redirect them back to the home page
+				datalog("logged in to the system");
 				$this->session->set_flashdata('message', $this->ion_auth->messages());
 				redirect('/', 'refresh');
 			}
@@ -111,13 +114,12 @@ class Auth extends CI_Controller
 	 */
 	public function logout()
 	{
-		$this->data['title'] = "Logout";
-
 		// log the user out
+		if(isset($this->session->user_id)){ datalog("logging out"); }
+		
 		$logout = $this->ion_auth->logout();
-
 		// redirect them to the login page
-		$this->session->set_flashdata('message', $this->ion_auth->messages());
+		//$this->session->set_flashdata('message', $this->ion_auth->messages());
 		redirect('auth/login', 'refresh');
 	}
 
@@ -227,8 +229,8 @@ class Auth extends CI_Controller
 
 			// set any errors and display the form
 			$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
-			// $this->_render_page('auth' . DIRECTORY_SEPARATOR . 'forgot_password', $this->data);
-			render("auth/forgot_password",$this->data);
+			$this->_render_page('auth' . DIRECTORY_SEPARATOR . 'forgot_password', $this->data);
+			// render("auth/forgot_password",$this->data);
 		}
 		else
 		{
@@ -325,7 +327,7 @@ class Auth extends CI_Controller
 			else
 			{
 				// do we have a valid request?
-				if ($this->_valid_csrf_nonce() === FALSE || $user->id != $this->input->post('user_id'))
+				if ($user->id != $this->input->post('user_id'))
 				{
 
 					// something fishy might be up
@@ -429,7 +431,7 @@ class Auth extends CI_Controller
 			if ($this->input->post('confirm') == 'yes')
 			{
 				// do we have a valid request?
-				if ($this->_valid_csrf_nonce() === FALSE || $id != $this->input->post('id'))
+				if ($id != $this->input->post('id'))
 				{
 					return show_error($this->lang->line('error_csrf'));
 				}
@@ -596,7 +598,7 @@ class Auth extends CI_Controller
 		if (isset($_POST) && !empty($_POST))
 		{
 			// do we have a valid request?
-			if ($this->_valid_csrf_nonce() === FALSE || $id != $this->input->post('id'))
+			if ( $id != $this->input->post('id'))
 			{
 				show_error($this->lang->line('error_csrf'));
 			}
@@ -738,6 +740,26 @@ class Auth extends CI_Controller
 				// $this->session->set_flashdata('message', $this->ion_auth->messages());
 				notice($this->ion_auth->messages());
 				redirect("auth", 'refresh');
+			}else{
+				// notify("The group name given already exists");
+				$message = (validation_errors() ? validation_errors() : ($this->ion_auth->errors() ? $this->ion_auth->errors() : $this->session->flashdata('message')));
+				if($message) notice($message,1);
+				$this->data["message"]="";
+				$this->data['group_name'] = array(
+					'name'  => 'group_name',
+					'id'    => 'group_name',
+					'type'  => 'text',
+					'value' => $this->form_validation->set_value('group_name'),
+				);
+				$this->data['description'] = array(
+					'name'  => 'description',
+					'id'    => 'description',
+					'type'  => 'text',
+					'value' => $this->form_validation->set_value('description'),
+				);
+				$this->data["groups"] = $this->ion_auth->get_users_groups()->result();
+				// $this->_render_page('auth' . DIRECTORY_SEPARATOR . 'create_group', $this->data);
+				render("auth/create_group",$this->data);
 			}
 		}
 		else
@@ -885,7 +907,7 @@ class Auth extends CI_Controller
 
 	function groups(){
 		if($this->ion_auth->is_admin()) { $data["groups"] = $this->ion_auth->get_users_groups()->result(); render("auth/groups", $data); 
-		}else{ kickout(); }
+		}else{ protect(); }
 	}
 
 	function delgroup($id){

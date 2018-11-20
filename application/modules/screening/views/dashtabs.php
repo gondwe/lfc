@@ -30,26 +30,10 @@ $cat = $clinics["category_count"];
 
 
 
-    <div class="col-md-6 col-sm-6 col-lg-4 col-xs-12 pull-left  mb-3">
-        <div class="">
-            <div class="card-title p-1 bg-dark text-light text-center">
-                PNO GENERATOR
-            </div>
-            <div class="card-body bg-dark">
-                <!-- <div class="font-weight-bold text-light">NEW PATIENT</div> -->
-                <h1 class="pt-3 text-center text-danger font-weight-bold"><?=autogen()?>/18</h1>
-            <!-- <a href="<?=base_url('patient/discharge')?>" class="pull-right mr-3 text-left">DISCHARGED <span class="mt-1 badge badge-primary pull-right">15</span></a> -->
-               
-            </div>
-        </div> 
-    </div>
-
-
-
 
     <div class="col-md-6 col-sm-6 col-lg-4 col-xs-12 pull-left  mb-3">
         <div class="">
-            <div class="card-title p-1 bg-dark text-light text-center">
+            <div class="card-title p-1 bg-primary text-light text-center">
                 ACTIONS TAB
             </div>
             <div class="card-body bg-light">
@@ -69,6 +53,21 @@ $cat = $clinics["category_count"];
     </div>
 
 
+
+
+
+    <div class="col-md-6 col-sm-6 col-lg-4 col-xs-12 pull-left  mb-3">
+        <div class="">
+            <div class="card-title p-1 bg-light text-light text-center">
+                PNO GENERATOR
+            </div>
+            <div class="card-body bg-white border border-primary ">
+                <!-- <div class="font-weight-bold text-light">NEW PATIENT</div> -->
+                <h1 class="pt-3 text-center text-danger font-weight-bold"><?=autogen()?>/18</h1>
+            <!-- <a href="<?=base_url('patient/discharge')?>" class="pull-right mr-3 text-left">DISCHARGED <span class="mt-1 badge badge-primary pull-right">15</span></a> -->
+            </div>
+        </div> 
+    </div>
 
 
 

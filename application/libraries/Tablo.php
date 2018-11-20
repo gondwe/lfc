@@ -172,7 +172,7 @@ class Tablo extends fieldsets{
 	public function newform(){
 		$this->init();
 		$_SESSION["action"] = "insert";
-		echo "<form action='".base_url('crud/insert/'.$this->table)."' enctype='multipart/form-data'  method='post'>";
+		echo "<form action='".base_url('crud/insert/'.$this->table)."' enctype='multipart/form-data' class='mx-md-1' method='post'>";
 			/* call form fields */
 			$this->form_fields();
 			/* add hidden fields */
@@ -204,7 +204,7 @@ class Tablo extends fieldsets{
 		$this->init($a);
 		$_SESSION["action"] = "update";
 		/* create edit from */
-		echo "<form action='".base_url('crud/save/'.$this->table)."' role='form' class='row' enctype='multipart/form-data' class='' method='post'>";
+		echo "<form action='".base_url('crud/save/'.$this->table)."' role='form'  enctype='multipart/form-data' class='mx-md-1' method='post'>";
 		/* form fields */
 		$this->form_fields();
 		/* add table name */

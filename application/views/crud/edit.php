@@ -1,4 +1,4 @@
-<?=titles("Edit ".rxx($vt ?? $table),null,1)?>
+<?=titles(topic("Edit ".$vt ?? $table))?>
 <hr>
 <?php
 

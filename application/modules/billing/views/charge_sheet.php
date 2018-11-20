@@ -78,7 +78,7 @@ function savecharge(){
         $.post("<?=base_url("patient/savecharge")?>", {queries}, (res)=>{
             
         }).done(function(){    
-            loadRecent();
+            // loadRecent();
             success("Charged !", "Charge sheet saved & queued");
             clearcharge()
         })

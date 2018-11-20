@@ -43,7 +43,9 @@ class Items_model extends CI_Model
 
 
 	function search($req){
-		return get("select id, item, unit_cost from tbl_item where item like '$req%' limit 10");
+
+		return get("select id, name as item, unitPrice as unit_cost from items where name like '$req%' or code ='$req' limit 10");
+		
 	}
 
 

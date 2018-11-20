@@ -23,6 +23,12 @@ class Stack_exchange extends CI_Model {
             case "chaplain":
                 qstack("refractionq", "set", $id);
             break;
+
+            /* when is done with the prescription */
+            case "prescription":
+                qstack("pharmacyq", "set", $id);
+                qstack("cashierq", "set", $id);
+            break;
         }
     }
 }

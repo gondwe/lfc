@@ -1,19 +1,15 @@
 
 <?php $prof = current($profile); ?>
-<div class="m-2">
 <?php 
 
-    echo topic("Patient profile");
-
-    // unset($_SESSION["pftab"]);
+    
+    echo "<span class='text-secondary lead ml-md-3 font-weight-bold'>Profile Detail | </span>".pflink($prof->id);
     $pftab = $this->session->pftab ?? "details-tab";
-
     // pf($pftab);
 
-
 ?>
-
-<div class="m-3">
+<hr>
+<div class="m-mx-3">
 <ul class="nav nav-tabs" id="myTab" role="tablist">
   <li class="nav-item">
     <a class="nav-link <?=$pftab === "details-tab" ? 'active' : null ?>" id="details-tab" data-toggle="tab" href="#details" role="tab" aria-controls="details" aria-selected="false">PATIENT INFO</a>
@@ -46,8 +42,8 @@
     <?=$this->load->view('prescription')?>
   </div>
 
-  <div class="tab-pane fade" id="misc" role="tabpanel" aria-labelledby="misc-tab">
-    <div class="p-5">
+  <div class="tab-pane fade <?=$pftab === "misc-tab" ? 'show active' : null ?>" id="misc" role="tabpanel" aria-labelledby="misc-tab">
+    <div class="p-md-5">
       <p><a href="<?=base_url('patient/svc/refraction')?>" class="btn btn-primary btn-sm m-2">REFRACTION</a></p>
       <p><a href="<?=base_url('patient/svc/lab')?>" class="btn btn-primary btn-sm m-2">LAB & SURGERY</a></p>
       <p><a href="<?=base_url('patient/svc/paed')?>" class="btn btn-primary btn-sm m-2">PAEDIATRIAC</a></p>
@@ -62,7 +58,7 @@
 
 
 <script>
-  $(".nav-link").click(function(){
+  $(".nav-tabs .nav-link").click(function(){
     $.post("<?=base_url('patient/setpf_tab/')?>" + this.id )
   })
 </script>
@@ -70,11 +66,11 @@
 
 
 <style>
-.tab-pane {
-  background:#fff !important;
-  height: -webkit-fill-available;
-}
-.nav-link:hover {
-  color:red !important ;
-}
-</style>
+  .tab-pane {
+    background:#fff !important;
+    height: -webkit-fill-available;
+  }
+  .nav-tabs .nav-link:hover {
+    color:red !important ;
+  }
+</style>  

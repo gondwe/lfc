@@ -6,27 +6,18 @@ echo topic("recent notifications");
 ?>
 
 
-<!-- <div class="d-block bg-beige p-1 m-1">Thins</div> -->
-<!-- <div class="d-block bg-beige p-1 m-1">Thins</div> -->
+<link rel="stylesheet" href="<?=base_url('assets/css/jquery-ui.css')?>">
+<link rel="stylesheet" href="<?=base_url('assets/css/dataTables.jqueryui.min.css')?>">
+<div class="ml-md-4">
 
-<table class="table-striped example">
-    <thead>
-        <tr>
-            <th></th>
-            <th></th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
     <?php foreach($notes as $n): ?>
-        <tr class="bg-beige m-1">
-            <td><?=rxx($n->to_)?></td>
-            <td><?=$n->message?></td>
-            <td class='text-right'><?=datef($n->date)?></td>
-        </tr>
+        <div class="bg-beige mb-1 lead rowd">
+            
+            <span><?=rxx($n->to_, 2)?></span>
+            <span><?=$n->message?></span>
+            <span class='float-right'><?=datef($n->date)?></span>
+        </div>
     <?php endforeach; ?>
-    </tbody>
-</table>
 
 <?php
 
@@ -36,13 +27,31 @@ echo topic("recent notifications");
 ?>
 
 <style>
-    .bg-beige > td {
+    .bg-beige:hover {
+        background:darkmagenta;
+    }
+    .bg-beige  > span {
+        padding-left:2px;
+    }
+    .bg-beige  {
         background:#8bc34a;
         border-bottom:1px solid #dcdcdc;
         color:white;
         padding:3px;
+        /* margin-bottom:3px; */
     }
     table {
         width:100%;
     }
 </style>
+
+
+<script>
+
+	$(document).ready(function() {
+		$("#example").DataTable({
+			pageLength:25
+		});
+	} );
+
+</script>

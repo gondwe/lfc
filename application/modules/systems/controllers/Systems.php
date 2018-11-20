@@ -34,6 +34,12 @@ class Systems extends CI_Controller {
     */    
     function admin(){
         $data = [];
+        $data["chaplain"] = $this->sys_model->questate("chaplain");
+
+        // pf($data);
+        
+        
+        
         if($this->accessible){
             datalog("access on admin dashboard",1);
             serve("dashboard",$data);

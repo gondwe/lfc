@@ -1,5 +1,5 @@
 <?php 
-// pf($clinics);
+// pf($patient);
 
 $today = fetch("select count(id) from patient_master where date = date(current_timestamp)");
 $cltype = $clinics["clinic_types"];
@@ -39,8 +39,8 @@ $cat = $clinics["category_count"];
               <a href="<?=base_url('patient/svc/diagnosis')?>" class="btn btn-primary btn-sm btn-block text-center">
                 DIAGNOSIS
               </a>
-              <a href="<?=base_url('patient/svc/diagnosis')?>" class="btn alert-danger btn-sm btn-block text-center">
-                QUEUE STATUS
+              <a href="<?=base_url('patient/svc/refraction')?>" class="btn alert-danger btn-sm btn-block text-center">
+                REFRACTION
               </a>
             
             
@@ -55,7 +55,7 @@ $cat = $clinics["category_count"];
 <div class="row"></div>
 <hr>
 
-<?php   $this->load->view("theatrelist");  ?>
+<?php   $this->load->view("theatrelist", ["patient"=>$patient]);  ?>
 
 
 <style>

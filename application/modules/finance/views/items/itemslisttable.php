@@ -1,32 +1,32 @@
 <?php defined('BASEPATH') OR exit('') ?>
 
-<?= isset($range) && !empty($range) ? $range : ""; ?>
+<?=isset($range) && !empty($range) ? $range : ""; ?>
 <div class="panel panel-primary">
     <!-- Default panel contents -->
-    <div class="panel-heading">Items</div>
+    <!-- <div class="panel-heading">Items</div> -->
     <?php if($allItems): ?>
-    <div class="table table-responsive">
-        <table class="table table-bordered table-striped" style="background-color: #f5f5f5">
+    <div class="ml-md-3">
+        <table class="table table-bordered bg-white" style="">
             <thead>
                 <tr>
                     <th>SN</th>
-                    <th>ITEM NAME</th>
-                    <th>ITEM CODE</th>
+                    <th>NAME</th>
+                    <th>CODE</th>
                     <th>DESCRIPTION</th>
-                    <th>QTY IN STOCK</th>
+                    <th>QTY</th>
                     <th>UNIT PRICE</th>
                     <th>TOTAL SOLD</th>
-                    <th>TOTAL EARNED ON ITEM</th>
-                    <th>UPDATE QTY</th>
-                    <th>EDIT</th>
-                    <th>DELETE</th>
+                    <th>TOTAL EARNED</th>
+                    <th><i class="fa fa-refresh text-primary"></i></th>
+                    <th><i class="fa fa-edit text-secondary"></i></th>
+                    <th><i class="fa fa-trash text-secondary"></i></th>
                 </tr>
             </thead>
             <tbody>
                 <?php foreach($allItems as $get): ?>
                 <tr>
                     <input type="hidden" value="<?=$get->id?>" class="curItemId">
-                    <th class="itemSN"><?=$sn?>.</th>
+                    <td class="text-center itemSN"><?=$sn?>.</td>
                     <td><span id="itemName-<?=$get->id?>"><?=$get->name?></span></td>
                     <td><span id="itemCode-<?=$get->id?>"><?=$get->code?></td>
                     <td>
@@ -34,12 +34,12 @@
                             <?=word_limiter($get->description, 15)?>
                         </span>
                     </td>
-                    <td class="<?=$get->quantity <= $get->critical_level ? 'bg-danger' : ($get->quantity <= $get->reorder_level ? 'bg-warning' : '')?>">
+                    <td class="text-center <?=$get->quantity <= $get->critical_level ? 'bg-danger' : ($get->quantity <= $get->reorder_level ? 'bg-warning' : '')?>">
                         <span id="itemQuantity-<?=$get->id?>"><?=$get->quantity?></span>
                     </td>
-                    <td><span id="itemPrice-<?=$get->id?>"><?=number_format($get->unitPrice, 2)?></span></td>
-                    <td><?=$this->genmod->gettablecol('transactions', 'SUM(quantity)', 'itemCode', $get->code)?></td>
-                    <td>
+                    <td class="text-right"><span  id="itemPrice-<?=$get->id?>"><?=number_format($get->unitPrice, 2)?></span></td>
+                    <td class="text-center"><?=$this->genmod->gettablecol('transactions', 'SUM(quantity)', 'itemCode', $get->code)?></td>
+                    <td class="text-right">
                         <?=number_format($this->genmod->gettablecol('transactions', 'SUM(totalPrice)', 'itemCode', $get->code), 2)?>
                     </td>
                     <td class="text-center"><a class="pointer updateStock" id="stock-<?=$get->id?>"><i class="fa fa-chevron-circle-down text-success"></i></a></td>
@@ -67,3 +67,12 @@
         <?= isset($links) ? $links : "" ?>
     </ul>
 </div>
+
+<style>
+.table th {
+    background:#b8e785;
+}
+.table td, .table th {
+    padding:5px !important;
+}
+</style>

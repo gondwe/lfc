@@ -1,58 +1,49 @@
-<div class="m-5">
 <?php 
+    // echo topic("Patient Booking");
+    echo "<div class='px-md-3 px-sm-2'>".pflink($id)."</div>";
 
-echo topic("Book Patient");
-echo "<h2 >".pflink($id)."</h2>";
+    $values ?? [];
+    $drlist = isset($drlist)? $drlist :  skylark_group("doctor"); 
+    $procs = $this->db->select("id, prodesc")->get("procedures")->result();
 
-
-
-
+    // pf($this->_ci_cached_vars);
+    // pf($values);
+    $drsel = isset($values["doctor"]) ? " selected=TRUE " : null;
+    $procsel = isset($values["prodesc"]) ? " selected=TRUE " : null;
+    // pf($drlist);
 ?>
 <hr>
-<form action="<?=base_url('doctor/book')?>" method="post" class="row m-2">
+<form action="<?=base_url('doctor/book/'.$id)?>" method="post" class="px-md-3 px-sm-1 p-1">
 
-<div class="section col-lg-4 col-md-6 col-sm-12">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="inputGroupSelect01">DATE</label>
+                </div>
+                <input type="date" class="form-control" name="bkdate" required>
+            </div>
 
-
-    <div class="input-group mb-3">
-    <select class="custom-select" id="inputGroupSelect01">
-        <option selected>SELECT...</option>
-        <option value="1">One</option>
-        <option value="2">Two</option>
-        <option value="3">Three</option>
-    </select>
-    <div class="input-group-prepend">
-        <label class="input-group-text" for="inputGroupSelect01">SURGEON</label>
-    </div>
-    </div>
-    
-    
-    <div class="form-group">
-        <!-- <label for="">DATE</label>
-        <input type="date" name="date" id="" class="form-control">
-    </div> -->
-
-        <!-- <div class="col-md-4 mb-3"> -->
-      <!-- <label for="validationCustomUsername">Username</label> -->
-      <div class="input-group">
-        <input type="date" class="form-control" id="validationCustomUsername" placeholder="Username" aria-describedby="inputGroupPrepend" required>
-        <div class="input-group-prepend">
-          <span class="input-group-text" id="inputGroupPrepend">DATE</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="input-group mb-3">
-    <select class="custom-select" id="inputGroupSelect01">
-        <option selected>SELECT...</option>
-        <option value="1">One</option>
-        <option value="2">Two</option>
-        <option value="3">Three</option>
-    </select>
-    <div class="input-group-prepend">
-        <label class="input-group-text" for="inputGroupSelect01">PROCEDURE</label>
-    </div>
-    </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="inputGroupSelect01">SURGEON</label>
+                </div>
+                <select class="custom-select" name="doctor" id="inputGroupSelect01">
+                    <option selected>SELECT...</option>
+                    <?php foreach($drlist as $dr):?>
+                    <option <?=$drsel?> value="<?=$dr->id?>"><?=rxx($dr->names, 2)?></option>
+                    <?php endforeach;?>
+                </select>
+            </div>
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="inputGroupSelect01">PROCEDURE</label>
+                </div>
+                <select class="custom-select" name="prodesc" id="inputGroupSelect01">
+                    <option selected>SELECT...</option>
+                    <?php foreach($procs as $dr):?>
+                    <option <?=$procsel?> value="<?=$dr->id?>"><?=$dr->prodesc?></option>
+                    <?php endforeach;?>
+                </select>
+            </div>
 
 
 <div class="form-group ">
@@ -60,29 +51,21 @@ echo "<h2 >".pflink($id)."</h2>";
                 <ul class="list-inline alert bg-light">
                     <li class="list-inline-item">
                         <div class="custom-control custom-checkbox">
-                        <input type="checkbox" class="custom-control-input" id="customControlValidation1" required>
+                        <input type="checkbox" <?=$values["rf"] ?? null ?> class="custom-control-input" name="rf" id="customControlValidation1" >
                         <label class="custom-control-label" for="customControlValidation1">RIGHT EYE</label>
                         </div>
                     </li>
-                <li class="list-inline-item pull-right">
-                    <div class="custom-control custom-checkbox">
-                    <input type="checkbox" class="custom-control-input" id="customControlValidation2" required>
-                    <label class="custom-control-label" for="customControlValidation2">LEFT EYE</label>
-                    </div>
-                </li>
+                    <li class="list-inline-item pull-right">
+                        <div class="custom-control custom-checkbox">
+                        <input type="checkbox" <?=$values["lf"] ?? null ?> class="custom-control-input" name="lf" id="customControlValidation2" >
+                        <label class="custom-control-label" for="customControlValidation2">LEFT EYE</label>
+                        </div>
+                    </li>
                 </ul>
+                <div class="form-group">
+                    <textarea name="notes" id="" cols="30" rows="6" placeholder="notes" class="form-control"></textarea>
+                </div>
+                <button class="btn btn-primary btn-block">BOOK PATIENT</button>
             </div>
 
-    
-</div>
-        <div class="pull-right section col-lg-4 col-md-6 col-sm-12">
-        
-
-        <div class="form-group">
-            <textarea name="notes" id="" cols="30" rows="6" placeholder="notes" class="form-control"></textarea>
-        </div>
-        
-    <button class="btn btn-primary btn-block text-left pull-right">BOOK PATIENT</button>
-
-    </div>
-    </div>
+    </form>

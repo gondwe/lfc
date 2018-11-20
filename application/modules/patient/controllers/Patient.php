@@ -19,6 +19,7 @@ class Patient extends MX_Controller {
 
 	public function profile($id=null){
 		$id = $id ?? $_SESSION["activepatient"]; 
+		$this->session->activepatient = $id;
 		$data["profile"] = $this->pfdata($id);
 		serve("profile",$data);
 	}
@@ -162,5 +163,45 @@ class Patient extends MX_Controller {
 	*/
 	public function setpf_tab($active){
 		$_SESSION["pftab"] = $active;
+	}
+
+
+	public function saveprescription($id){
+		$p = $_POST;
+		// pf($p);
+
+		$od = isset($p["od"]) ? "1" : null;
+        $os = isset($p["os"]) ? "2" : null;
+        $bf = (isset($p["os"]) && isset($p["od"])) ? "3" : null;
+        
+		$eye = $od ?? $os; $eye = $bf ?? $eye;
+		
+		if($eye){
+			if(isset($p["od"])) unset($p["od"]);
+			if(isset($p["os"])) unset($p["os"]);
+			$p["ratio"] = $p["a"]." X ".$p["b"]; 
+            $p["eye"] = $eye;
+            $p["pid"] = $id;
+			
+			unset($p["a"]);
+			unset($p["b"]);
+			
+			pf($p);
+            if($this->db->insert("prescriptions", $p)){ 
+				notify("save successful");
+				redirect("patient/profile/".$id); }
+			
+		}else{
+
+			notify("Pleasse select eye", 2);
+			$data = [];
+			render("prescription", $data);
+		}
+
+	}
+
+
+	public function deletePresc($id){
+		process("delete from prescriptions where id = '$id'");
 	}
 }

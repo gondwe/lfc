@@ -645,6 +645,14 @@ function qstack($section, $action, $id){
 		return (empty($_SESSION[$section])) ? $id : current(array_splice($_SESSION[$section],0,1));
 	}else{
 		pushmessage($_SESSION["username"], $section, "Patient #$id in queue");
+		
+		$skid = substr($section, 0, -1);
+		$sk_section = skylark_group($skid);
+		
+		foreach ($sk_section as $key => $value):
+			pushmessage($_SESSION["user_id"], $value->id, "Patient #$id queued to $skid");
+		endforeach;
+		
 		return ($id === null ) ? null : ($_SESSION[$section][$id] = $id);
 	}
 
@@ -698,3 +706,29 @@ function insertJoin($qs, $qtype){
     return  "('$qtype', '".implode("'),('$qtype', '",$qs)."')";
 }
 
+
+
+/* list of users in a skylark group
+	*	@param:$sect
+	*	return $users_array
+ */
+function skylark_group($sect){
+    $id = fetch("select id from dataconf where a = 'group_cat' and b = 'skylark_".$sect."'");
+    $skids = implode("','", gl("select distinct c from dataconf where b = '$id' and a = 'groupstore' "));
+    $sk = implode("','",gl("Select user_id from users_groups where group_id in ('$skids')"));
+    $usr = get("select id, concat(first_name,' ',last_name) as names from users where id in ('$sk') ");
+    return $id? $usr : pf("Group Error [$sect] not found");
+}
+
+/* reverse lookup 
+	*	list of users in a skylark group
+	*	@param:$sect
+	*	return $boolean	
+ */
+function in_skylark_group($sect){
+    $users = skylark_group($sect);
+    if(is_array($users)){
+        $filter = array_column($users, "id");
+        return in_array($_SESSION["user_id"], $filter) ? TRUE : FALSE;
+    }
+}

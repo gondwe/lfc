@@ -1,3 +1,11 @@
+<?php 
+
+// pf($chaplain);
+// pf($this->session);
+$chap= current($chaplain);
+
+?>
+
 <h5 class="m-3 pull-left">Dashboard</h5>
 <a href="<?=base_url('systems/audit_trail')?>" class="btn btn-sm btn-sap pull-right m-3">AUDIT TRAIL</a>
 <hr>
@@ -22,21 +30,28 @@
     </div>
 </div>
 
+
+
 <div class="col-lg-6 col-md-8 pull-left" style="border-left:1px solid #ddd">    
 <span class="pt-2 pl-2 pb-0 text-danger h5 mb-0"> Questate</span>
         <hr>    
-        <span class="badge btn-danger badge-pill">20</span>
+        <span class="badge btn-danger badge-pill"><?=isset($_SESSION['chaplainq']) ?? '0'?></span>
         <span class="text-secondary ml-2">Chaplain 
             <a href='<?=base_url('patient/svc/chaplain')?>' class="badge badge-danger pull-right">View All</a>
         </span>
         <span class="card p-2 m-1">
             <span class="rowd text-dark">
-                <strong>Next :</strong>
-                Nancy Akello
-                (51 yrs)
+                <strong><?=$chaplain['isold'] ? "Last" : "Next" ?> :</strong>
+                <?=$chap->patient_names?>
+                (<?=$chap->age?>)
                 <br>
-                <strong class="text-danger">Cc.</strong>
-                <small>Injured while splitting wood</small>
+                <?php if($chaplain["isold"]){ ?>
+                    <strong class="text-danger">Faith/Religion.</strong>
+                    <small><?=$chaplain['faith']?></small>
+                <?php }else{ ?>
+                    <strong class="text-danger">Cc.</strong>
+                    <small><?=$chaplain->cc?></small>
+                <?php }?>
 
             </span> 
         </span>

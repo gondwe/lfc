@@ -3,6 +3,7 @@
 <?php 
 $g2 = $chatlist;
 $first = array_shift($chatlist);
+// pf($chatlist);
 
 if(empty($first)){ echo topic("No Messages"); $this->load->view("msg_start", ["ul"=>$userlist]);
 
@@ -14,7 +15,7 @@ $factive = $first->id == $active ? 'green' : null;
 $showactive = $first->id == $active ? 'show active' : null;
 
 ?>
-
+<link rel="stylesheet" href="style.css">
 <div class="bg-white p-3">
   <div class="card-body">
     <div class="bd-example bd-example-tabs pt-3">
@@ -26,11 +27,13 @@ $showactive = $first->id == $active ? 'show active' : null;
             <a class="d-block px-2 text-secondary active <?=$factive?>" id="v-pills-<?=$first->id?>-tab" data-toggle="pill" data-id="<?=$first->id?>" href="#v-pills-<?=$first->id?>" role="tab" aria-controls="v-pills-<?=$first->id?>" aria-selected="true">
                 <?=rxx($first->username,2)?>
             </a>
-          <?php foreach ($chatlist as $value): ?>
-            <a class="d-block px-2 text-secondary <?=$factive = $value->id == $active ? 'green' : null;?>" data-id='<?=$value->id?>' id="v-pills-<?=$value->id?>-tab" data-toggle="pill" href="#v-pills-<?=$value->id?>" role="tab" aria-controls="v-pills-<?=$value->id?>" aria-selected="false">
+          <?php foreach ($chatlist as $value): if($value) { ?>
+            <a class="d-block px-2 text-secondary 
+              <?=$factive = $value->id == $active ? 'green' : null;?>"
+                 data-id='<?=$value->id?>' id="v-pills-<?=$value->id?>-tab" data-toggle="pill" href="#v-pills-<?=$value->id?>" role="tab" aria-controls="v-pills-<?=$value->id?>" aria-selected="false">
                 <?=rxx($value->username,2)?>
             </a>
-          <?php endforeach;?>
+          <?php } endforeach;?>
           </div>
         </div>
         <div class="col-sm-9 d-block" style="border-left:1px solid #dcdcdc">
@@ -92,7 +95,7 @@ $showactive = $first->id == $active ? 'show active' : null;
     } );
 
     // retrieve talks with budddy 
-    function fetchTalk(id) { $.get( 'activechat/get/'+  id, function(res){ $("#chatthread").html(res) }) }
+    function fetchTalk(id) { pf('sdad'); $.get( 'activechat/get/'+  id, function(res){ $("#chatthread").html(res) }) }
 
     // bleep with websocket
     function writeName(id,msg) { 

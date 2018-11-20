@@ -1,6 +1,6 @@
 <?php 
 
-defined("BASEPATH") || exit("Acha Ujinga");
+defined("BASEPATH") || exit("Stop It");
 
 class Sys_Model extends CI_Model {
     public function __construct()
@@ -79,6 +79,25 @@ class Sys_Model extends CI_Model {
             $this->db->insert("dataconf", $where);
         }
 
+    }
+
+
+    /* load defaults for the questate */
+    public function questate($section){
+        $section = strtolower($section);
+        $data = [];
+        if($section === "chaplain"){
+            $pq = $_SESSION["chaplainq"] ?? array();
+            $id = empty($pq)? $this->patient_model->activechaplain() : current($pq);
+            $data = $this->patient_model->profile($id);
+            $data['cc'] = fetch("select cc from screening where pid = ".$id." ");
+            $data['faith'] = fetch("select d.b as faith from chaplain as c 
+                                        left join dataconf as d on d.a = 'religion' and d.id = c.religion
+                                        where c.pid = ".$id." ");
+            $data['isold'] = isset($_SESSION["chaplainq"]) ? FALSE : TRUE;
+        }
+
+        return $data;
     }
 
 }

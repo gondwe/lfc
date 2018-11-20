@@ -27,9 +27,8 @@ class Crud extends MX_Controller {
 
     public function insert($t,$ref=null){
         $table = array_pop($_POST);
-
+        pf($table);
         $ref = $ref ?? $_SERVER["HTTP_REFERER"];
-        $ref = str_replace(".","/",$ref);
         
         if($id = $this->insertrecord($table)){
             datalog("New Record Created - $t");
@@ -37,8 +36,11 @@ class Crud extends MX_Controller {
         }
 
         // misc functions 
-        $this->stack_exchage->shuffle();
+        $this->stack_exchange->shuffle($table);
         redirect($ref);
+
+        // pf($ref);
+        // pf($_SERVER["HTTP_REFERER"]);
         
     }
 

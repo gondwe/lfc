@@ -2,10 +2,10 @@
 $g2 = $group_cats;
 $first = array_shift($group_cats);
 $active = $this->session->activegal ?? $first->id;
-// pf($group_cats);
 
 $factive = $first->id == $active ? 'green' : null;
 $showactive = $first->id == $active ? 'show active' : null;
+// pf($active);
 
 ?>
 
@@ -20,11 +20,11 @@ $showactive = $first->id == $active ? 'show active' : null;
     <div class="col-3">
     <div class="d-flex pb-3 text-danger font-weight-bold">SKYLARK GROUPS</div>
       <div class="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical">
-        <a class="d-block p-2 dim active<?=$factive?>" id="v-pills-<?=$first->id?>-tab" data-toggle="pill" data-id="<?=$first->id?>" href="#v-pills-<?=$first->id?>" role="tab" aria-controls="v-pills-<?=$first->id?>" aria-selected="true">
+        <a class="d-block p-2 alert-primary active <?=$factive?>" id="v-pills-<?=$first->id?>-tab" data-toggle="pill" data-id="<?=$first->id?>" href="#v-pills-<?=$first->id?>" role="tab" aria-controls="v-pills-<?=$first->id?>" aria-selected="true">
             <?=rxx($first->b,2)?>
         </a>
        <?php foreach ($group_cats as $value): ?>
-        <a class="d-block p-2 dim <?=$factive = $value->id == $active ? 'green' : null;?>" data-id='<?=$value->id?>' id="v-pills-<?=$value->id?>-tab" data-toggle="pill" href="#v-pills-<?=$value->id?>" role="tab" aria-controls="v-pills-<?=$value->id?>" aria-selected="false">
+        <a class="d-block p-2 alert-primary <?=$factive = $value->id == $active ? 'green' : null;?>" data-id='<?=$value->id?>' id="v-pills-<?=$value->id?>-tab" data-toggle="pill" href="#v-pills-<?=$value->id?>" role="tab" aria-controls="v-pills-<?=$value->id?>" aria-selected="false">
             <?=rxx($value->b,2)?>
         </a>
        <?php endforeach;?>
@@ -102,7 +102,7 @@ $showactive = $first->id == $active ? 'show active' : null;
 
 <style>
   #v-pills-tab  > a.d-block:active {
-      background:green !important;
+      background:yellow !important;
   }
   #v-pills-tab  > a.d-block:hover {
       text-decoration:none !important;

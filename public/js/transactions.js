@@ -75,7 +75,6 @@ $(document).ready(function(){
 							
 							//unset value in barcode input
 							$("#barcodeText").val('');
-							
 							return false;
 						}
 					});

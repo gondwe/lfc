@@ -39,7 +39,7 @@ class User_model extends CI_Model {
         if($this->ion_auth->in_group($general_group, $id)) redirect("screening");
         if($this->ion_auth->in_group($optical, $id)) redirect("optical");
         if($this->ion_auth->in_group($pharmacy, $id)) redirect("pharmacy");
-        if($this->ion_auth->in_group($cashier, $id)) redirect("finance/cashier");
+        if($this->ion_auth->in_group($cashier, $id)) redirect("finance");
 
         
 

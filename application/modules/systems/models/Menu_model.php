@@ -75,9 +75,15 @@ class Menu_model extends CI_Model {
 
 
     public function groupnotes(){
+
         $gids = implode("','",$this->session->groups);
-        $skids = implode("','", gl("select distinct b from dataconf where c in ('$gids') and a = 'groupstore' "));
-        $sk = implode("','",gl("Select b from dataconf where id in ('$skids') and a = 'group_cat'"));
+        $mine = array_column(get("select distinct b from dataconf where c in ('$gids') and a = 'groupstore' "),"b");
+        if(empty($mine)) return []; 
+        $skids = implode("','", $mine);
+        $mine2 = array_column(get("Select b from dataconf where id in ('$skids') and a = 'group_cat'"),"b");
+        if(empty($mine2)) return []; 
+        
+        $sk = implode("','",$mine2);
         
         $gnotes = get("select * from chat where to_ in ('$sk') and recd = 0 limit 20");
         $this->gnotecount = count($gnotes);

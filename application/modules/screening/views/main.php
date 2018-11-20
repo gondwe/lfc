@@ -30,12 +30,12 @@ $cc = $screening->cc ?? null;
     <div class="rowd" >
         <input type="hidden" name="pid" id="pid" value="<?=$pno?>" required>
         <div class=" pull-left mt-2 col-sm-6 ">
-        <label for="">RF</label> 
-        <input type="text" name="rf" id="rf" required autofocus class="p-1" value="<?=$rf?>" placeholder="RF">
+        <label for="">RE</label> 
+        <input type="text" name="rf" id="rf" required autofocus class="p-1" value="<?=$rf?>" placeholder="RE">
         </div>
         <div class=" pull-right mt-2 col-sm-6">
-        <label for="">LF</label>
-        <input type="text" name="lf" id="lf" required class="p-1 " value="<?=$lf?>" placeholder="LF">
+        <label for="">LE</label>
+        <input type="text" name="lf" id="lf" required class="p-1 " value="<?=$lf?>" placeholder="LE">
         </div>
     </div>
 

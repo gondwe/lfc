@@ -1,13 +1,13 @@
 
-<table id="example" class='table-striped' width="100%"   >
-    <thead style="border-bottom:2px solid #aaa; padding-bottom:5px ">
+<table id="example" class='table table-compact m-md-3' width="100%"   >
+    <thead style="border-bottom:1px solid #aaa; padding-bottom:5px ">
         <tr >
             <th style="border-right:1px solid #aaa; ">Sno</th>
             <th>NAMES</th>
             <th>ID NUMBER</th>
             <th>CONTACTS</th>   
             <th>ADDRESS</th>   
-            <th style="border-left:1px solid #aaa" class='text-primary'>ACTION</th>   
+            <th  class='text-primary'>ACTION</th>   
         </tr>
     </thead>
     <tbody>

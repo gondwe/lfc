@@ -1,15 +1,17 @@
-<div class=""><?=topic('chaplain Dashboard')?></div>
+<div class=""><?=topic('Dashboard')?></div>
 
 
-<h5 class="pull-left col-sm-8 col-md-7"><span id="names"><?=pflink($patient)?></span>
+<div class="pull-left col-sm-8 col-md-7"><span id="names">
+<?=pflink($patient)?>
+</span>
     <small  class="text-secondary col-md-3 h6"><span id="section"><?=$section?></span></small>
-</h5>
+</div>
 
 <hr>
 
-<form action="<?=base_url('screening/query')?>" method="post" id="search" class="col-md-6 pull-left mb-3">
-<input type="text" placeholder="Pno Search." name='sval' id='sval' class="form-control col-md-11 col-sm-11 col-xs-11 pull-left">
-<button type="submit" value="" class="btn alert-primary col-xs-1 col-sm-1 col-md-1"><i class="fa fa-check-square"></i></button>
+<form action="<?=base_url('screening/query')?>" method="post" id="search" class="mb-3 row mx-md-3">
+<input type="text" placeholder="Pno Search." name='sval' id='sval' class="form-control col-md-11 col-sm-11 col-xs-11 ">
+<button type="submit" value="" class="btn alert-primary col-xs-1 col-sm-1 col-md-1"><i class="fa fa-search"></i></button>
 </form>
 <hr>
 
@@ -26,6 +28,7 @@ $d->hidden("pid",$patient);
 
 $saved = fetch("select id from chaplain where pid = '$patient'");
 $saved ? $d->edit($saved) :  $d->newform();
+
 
 
 ?>

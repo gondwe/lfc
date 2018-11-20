@@ -10,6 +10,12 @@ class Middleroutes extends CI_Model {
             $mx = [
                 'finance/index'=>'DASHBOARD',
                 'finance/transactions'=>'TRANSACTIONS',
+                // 'finance/items'=>'ITEMS',
+            ];
+            break;
+            case "pharmacy" : 
+            $mx = [
+                'pharmacy'=>'DASHBOARD',
                 'finance/items'=>'ITEMS',
             ];
             break;
@@ -41,6 +47,16 @@ class Middleroutes extends CI_Model {
             $mx = [
                 'chaplain'=>'DASHBOARD',
                 'chaplain/religion'=>'RELIGIONS',
+            ];
+            break;
+            
+            case "doctor" : 
+            $mx = [
+                'doctor'=>'DASHBOARD',
+                'patient/svc/diagnosis'=>'DIAGNOSIS',
+                'patient/svc/prescription'=>'PRESCRIPTION',
+                'patient/svc/refraction'=>'REFRACTION',
+                'doctor/diary'=>'LAB',
             ];
             break;
 

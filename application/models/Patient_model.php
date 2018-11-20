@@ -86,11 +86,19 @@ class Patient_model extends CI_Model {
     */
     function profile($id=null){
         if(is_null($id)) return array();
-        return get("select p.*, ucase(p.patient_names) as patient_names, age(p.dob) as age,  pt.b as ptype, gender.b as sex 
-        from patient_master as p 
-        left join dataconf as pt on pt.id = p.category and pt.a = 'patient_type' 
-        left join dataconf as gender on gender.id = p.sex and gender.a = 'gender'
-        where p.id = '$id'");
+        return get("SELECT 
+                        p.*, 
+                        ucase(p.patient_names) as patient_names, 
+                        age(p.dob) as age,  
+                        pt.b as ptype, 
+                        gender.b as sex
+                    FROM patient_master as p 
+                    LEFT JOIN dataconf as pt 
+                    ON pt.id = p.category and pt.a = 'patient_type' 
+                    LEFT JOIN dataconf as gender 
+                    ON gender.id = p.sex and gender.a = 'gender'
+                    WHERE p.id = '$id'
+                ");
     }
 
 
@@ -128,7 +136,26 @@ class Patient_model extends CI_Model {
         *   @return:string;
     */
     public function activepatient(){
-        return fetch("select id from patient_master where id = (select max(id) from patient_master)");
+        return fetch("select max(id) from patient_master");
+    }
+
+
+    
+    /*  
+        *   return the last id in chaplain
+        *   @return:string;
+    */
+    public function activechaplain(){
+        return fetch("select pid from chaplain where id = (select max(id) from chaplain) ");
+    }
+
+
+    /*  
+        *   return the last id in refraction
+        *   @return:string;
+    */
+    public function activerefraction(){
+        return fetch("select pid from refraction where id = (select max(id) from refraction) ");
     }
 
 

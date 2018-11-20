@@ -2,9 +2,13 @@
 <?php 
 $diag = [ "lids","conjunctiva","cornea","iris","pupil","lens","retina", ];
 
-$allowed = ["doctor"];
+// $allowed = array_column(skylark_group("doctor"), "id");
+// if($this->ion_auth->is_admin() || $this->ion_auth->in_group($allowed)){
 
-if($this->ion_auth->is_admin() || $this->ion_auth->in_group($allowed)){
+if($this->ion_auth->is_admin() || in_skylark_group("doctor")){
+
+
+  $diagdata = get("select id, b from dataconf where a = 'diagdata'");
 
 ?>
 
@@ -26,7 +30,7 @@ if($this->ion_auth->is_admin() || $this->ion_auth->in_group($allowed)){
     <tr >
       <td class='text-right text-danger pr-2'><?=rx($d,2)?></td>
       <td>
-        <input type="text" placeholder="NORMAL" class="ssx form-control">
+        <input type="text" placeholder="NORMAL" data-link="" class="ssx form-control">
         <input type="hidden" name="name" id="realval">
         <ul type="text" id="disx"></ul>
 

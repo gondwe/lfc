@@ -13,12 +13,10 @@ echo topic('group_categories', 1);
 
 </ul>
 <div class="tab-content" id="myTabContent">
-  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-  <?php $this->load->view('gal') ?>
-  </div>
-  <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+  <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab"><?php $this->load->view('gal') ?></div>
+  <!-- <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab"> -->
   
-  </div>
+  <!-- </div> -->
 </div>
 
 

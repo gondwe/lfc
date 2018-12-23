@@ -6,12 +6,27 @@ namespace ben10;
 
 use mysqli;
 
+// multi-db connector
 function db($d){ 
-    // multi-db connector
     switch($d){
-        case null : $a = "topnav"; $b="toor"; $c = "3307"; break;
-        case 1 : $a = "medicare"; $b=""; $c = "3306"; break;
-    }$db = new mysqli("localhost:$c","root",$b,$a);if($db->connect_errno > 0){die(spill($db->connect_error));}else{return $db;}}
+        case null : 
+			$a = "topnav"; 
+			$b="toor"; 
+			$c = "3307"; 
+		break;
+        case 1 : 
+			$a = "medicare"; 
+			$b=""; 
+			$c = "3306"; 
+		break;
+		
+    }$db = new mysqli("localhost:$c","root",$b,$a);if($db->connect_errno > 0){
+		die(spill($db->connect_error));
+	}else{
+		return $db;
+	}
+}
+
 function clean($i){ return mysqli_real_escape_string(db(), $i);}
 function run($a,$d=null){return process($a,$d);}
 function process($sql,$d=null){ $db = db($d); $_SESSION["erc"] = $j = ($db->query($sql))? TRUE :FALSE; if(!$j) spill($db->error); return $j; }  

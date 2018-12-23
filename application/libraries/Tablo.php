@@ -31,6 +31,7 @@ class Tablo extends fieldsets{
 	public $md = "6";
 	public $sm = "12";
 	public $valuetype;
+	public $mask=[];
 	public $hidden=[];
 	
 	
